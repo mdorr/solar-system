@@ -3,7 +3,7 @@
 
 The solar system app shows a 3d representation of the solar system, showing the major celestial bodies and their respective positions and orbits relative to the sun. The user can explore the various planets, accessing astronomical data and photos.
 
-While the app will be faithful to scientific data, the orbits and positions will only be calculated using approximate models. Specifically, the gravitational influence exerted and experienced by the celestial bodies will not be calculated. For the purposes of this app, a less complex simulaton will suffice.
+While the app will be faithful to scientific data, the orbits and positions will only be calculated using approximate models. Specifically, the gravitational influence exerted and experienced by the celestial bodies will not be calculated. For the purposes of this app, a less complex simulation will suffice.
 
 Imagery is available in the public domain through NASA and other space research agencies.
 
@@ -20,8 +20,8 @@ Imagery is available in the public domain through NASA and other space research 
 ### Architecture and technologies
 
 - Javascript and jQuery for the basic app logic
-- three.js for 3d graphics
-- ((TODO: Search name of libary)) to provide mathematical models for orbital mechanics
+- [three.js](https://threejs.org) for 3d graphics
+- [Node-astronomy](https://github.com/TimeMagazine/node-astronomy) to provide mathematical models for orbital mechanics
 
 The 3d scene will contain the following components:
 - Skysphere to display (static) background image of the Milky Way and the stars
