@@ -108,8 +108,6 @@ const pluto = new StellarObject(
 )
 pluto.obj.position.x = 3500;
 
-
-
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.target = earth.obj.position;
 camera.position = earth.position;
