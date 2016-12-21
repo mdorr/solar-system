@@ -14,7 +14,7 @@ Imagery is available in the public domain through NASA and other space research 
 - Calculate the respective positions for any given date
 
 ### Wireframes
-See [here](/wireframes).
+See [here](https://github.com/mdorr/solar-system/tree/master/docs/wireframes).
 
 ### Stretch Goals
 
