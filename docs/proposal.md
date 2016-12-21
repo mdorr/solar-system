@@ -13,6 +13,9 @@ Imagery is available in the public domain through NASA and other space research 
 - Zoom in on individual celestial bodies to show a description with additional data, such as composition and size, as well as any detailed pictures available.
 - Calculate the respective positions for any given date
 
+### Wireframes
+See [here]('./wireframes').
+
 ### Stretch Goals
 
 - Include interactive displays of significant events in space exploration, p.e. the Apollo 11 moon mission with the respective trajectories of the spacecraft involved. Other possible examples are the Verena missions to Venus, the Voyager deep space probes, and the Chicxulub impact event, which caused the extinction of the dinosaurs.
