@@ -3,7 +3,7 @@
 
 The solar system app shows a 3d representation of the solar system, showing the major celestial bodies and their respective positions and orbits relative to the sun. The user can explore the various planets, accessing astronomical data and photos.
 
-While the app will be faithful to scientific data, the orbits and positions will only be calculated using approximate models. Specifically, the gravitational influence exerted and experienced by the celestial bodies will not be calculated. For the purposes of this app, a less complex simulation will suffice.
+While the app will be faithful to scientific data, the orbits and positions will only be calculated using approximate models. Specifically, the gravitational influence exerted and experienced by the celestial bodies will not be calculated. For the purposes of this app, a less complex simulation will suffice. See the [Celestial Data document]('./celestial_data.md') for details.
 
 Imagery is available in the public domain through NASA and other space research agencies.
 
