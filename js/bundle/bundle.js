@@ -68,7 +68,7 @@
 	  "./textures/mercury/mercury_diffuse.jpg",
 	  sun.obj
 	)
-	mercury.addOrbit(0.3871, 0.20563, 3.38, sun);
+	mercury.addOrbit(0.3871, 0.20563, 3.38, 0.3075, sun, 0x616569);
 	
 	const venus = new StellarObject(
 	  6.052,
@@ -76,7 +76,7 @@
 	  sun.obj
 	)
 	
-	venus.addOrbit(0.7233, 0.0067, 3.86, sun);
+	venus.addOrbit(0.7233, 0.0067, 3.86, 0.7184, sun, 0x8f8d77);
 	
 	const earth = new StellarObject(
 	  6.371,
@@ -84,7 +84,7 @@
 	  sun.obj
 	)
 	
-	earth.addOrbit(1, 0.0167, 7.16, sun);
+	earth.addOrbit(1, 0.0167, 7.16, 0.9833, sun, 0x4d65a4);
 	earth.obj.position.x = 1500;
 	
 	const moon = new StellarObject(
@@ -101,7 +101,7 @@
 	)
 	mars.obj.position.x = 2000;
 	
-	mars.addOrbit(1.524 , 0.0934, 5.65, sun);
+	mars.addOrbit(1.524 , 0.0934, 5.65, 1.3814, sun, 0x79260f);
 	
 	
 	const jupiter = new StellarObject(
@@ -110,7 +110,7 @@
 	  sun.obj
 	)
 	
-	jupiter.addOrbit(5.2026, 0.048498, 6.09, sun);
+	jupiter.addOrbit(5.2026, 0.048498, 6.09, 4.95029, sun, 0xd4b48d);
 	
 	const saturn = new StellarObject(
 	  58.262,
@@ -128,7 +128,7 @@
 	saturn.obj.position.x = 2750;
 	saturn.ring.rotation.x = -45;
 	
-	saturn.addOrbit(9.5549, 0.05555, 5.51, sun);
+	saturn.addOrbit(9.5549, 0.05555, 5.51, 9.024, sun, 0xceaf58);
 	
 	
 	const uranus = new StellarObject(
@@ -147,7 +147,7 @@
 	uranus.obj.position.x = 3000;
 	uranus.ring.rotation.x = -45;
 	
-	uranus.addOrbit(19.2184, 0.04638, 6.48, sun);
+	uranus.addOrbit(19.2184, 0.04638, 6.48, 18.33, sun, 0xc2edee);
 	
 	
 	
@@ -159,7 +159,7 @@
 	)
 	neptune.obj.position.x = 3250;
 	
-	neptune.addOrbit(30.1104, 0.0094, 6.34, sun);
+	neptune.addOrbit(30.1104, 0.0094, 6.34, 29.81, sun, 0x3448ff);
 	
 	const pluto = new StellarObject(
 	  1.187,
@@ -168,7 +168,7 @@
 	)
 	pluto.obj.position.x = 3500;
 	
-	pluto.addOrbit(39.48, 0.2488, 17.16, sun);
+	pluto.addOrbit(39.48, 0.2488, 17.16, 29.659, sun, 0xc29a6d);
 	
 	controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.target = earth.obj.position;
@@ -227,12 +227,20 @@
 	    this.obj.add(body);
 	  }
 	
-	
-	  addOrbit (semiMajorAxis, eccentricity, inclination, root) {
+	  // Create an orbit. Takes the following parameters:
+	  // semiMajorAxis: The semi major axis of the ellipse, measured in AU
+	  // eccentricity: Used to calculate the semi minor axis
+	  // inclination: Inclination of the orbits pane relative to the sun
+	  // perihelion: Closest approach to the sun, measured in AU
+	  // root: The object this orbit is attached to. Should be the sun
+	  // color: The color the orbit is drawn in.
+	  addOrbit (semiMajorAxis, eccentricity, inclination, perihelion, root, color = 0x44444) {
 	    let semiMinorAxis = MathHelper.minorAxis(semiMajorAxis, eccentricity);
+	    let ellipseCenterX =
+	      root.obj.position.x - MathHelper.auToUnits((semiMajorAxis - perihelion));
 	
 	    var curve = new THREE.EllipseCurve(
-	    	root.obj.position.x,  root.obj.position.y,
+	    	ellipseCenterX,  root.obj.position.y,
 	    	MathHelper.auToUnits(semiMajorAxis), MathHelper.auToUnits(semiMinorAxis),
 	    	0,  2 * Math.PI,  // aStartAngle, aEndAngle
 	    	false,            // aClockwise
@@ -241,7 +249,7 @@
 	
 	    var path = new THREE.Path( curve.getPoints( 500 ) );
 	    var geometry = path.createPointsGeometry( 500 );
-	    var material = new THREE.LineBasicMaterial( { color : 0x444444 } );
+	    var material = new THREE.LineBasicMaterial( { color : color } );
 	
 	    // Create the final object to add to the scene
 	    var orbit = new THREE.Line( geometry, material );

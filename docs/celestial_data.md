@@ -38,7 +38,7 @@ Distances up to and including the Earth are measured in kilometers (km). Further
 * Rotational Period:  58.646 d
 * Orbital Period:     87.969 d
 * Aphelion:           69,816.9 units
-* Perihelion:         46,001.2 units
+* Perihelion:         0.3075 AU
 * Semi-major axis:    0.3871 AU
 * Semi-minor axis:    0.3788 AU
 * Eccentricity:	      0.205630
@@ -50,7 +50,7 @@ Distances up to and including the Earth are measured in kilometers (km). Further
 * Rotational Period:  -243.025 d
 * Orbital Period:     224.7 d
 * Aphelion:           108,939 units
-* Perihelion:         107,477 units
+* Perihelion:         0.7184 AU
 * Semi-major axis:    0.7233 AU
 * Semi-minor axis:    0.7233 AU
 * Eccentricity:       0.0067
@@ -62,7 +62,7 @@ Distances up to and including the Earth are measured in kilometers (km). Further
 * Rotational Period:  0.998 d
 * Orbital Period:     365.256 d
 * Aphelion:           152,100 units
-* Perihelion:         147,095 units
+* Perihelion:         0.9833 AU
 * Semi-major axis:    1 AU
 * Semi-minor axis:    0.9998 AU
 * Eccentricity:       0.0167
