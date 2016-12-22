@@ -46,22 +46,16 @@
 
 	const StellarObject = __webpack_require__ (1);
 	const MathHelper = __webpack_require__ (2);
+	const SceneManager = __webpack_require__ (6);
 	
-	
-	var scene = new THREE.Scene();
-	var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 10, 1000000000 );
-	
-	var renderer = new THREE.WebGLRenderer({ antialias: true });
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-	
-	const clock = new THREE.Clock();
+	SceneManager.initScene();
 	
 	const sun = new StellarObject(
 	  695.7,
 	  "./textures/sun/sun_diffuse.jpg",
-	  scene
+	  SceneManager.scene
 	)
+	sun.obj.position.x = 1; // Hack to prevent issue with controls; Orbitcontrols fail when position is (0,0,0)
 	
 	const mercury = new StellarObject(
 	  2.4397,
@@ -81,7 +75,7 @@
 	venus.updatePosition(0);
 	
 	const earth = new StellarObject(
-	  6.371,
+	  6000.371,
 	  "./textures/earth/earth_diffuse.jpg",
 	  sun.obj
 	)
@@ -110,7 +104,6 @@
 	  "./textures/jupiter/jupiter_diffuse.jpg",
 	  sun.obj
 	)
-	
 	jupiter.addOrbit(5.2026, 0.048498, 6.09, 4.95029, sun, 0xd4b48d);
 	jupiter.updatePosition(0);
 	
@@ -127,9 +120,7 @@
 	  "./textures/saturn/saturn_ring_trans.jpg"
 	);
 	
-	
 	saturn.ring.rotation.x = -45;
-	
 	saturn.addOrbit(9.5549, 0.05555, 5.51, 9.024, sun, 0xceaf58);
 	saturn.updatePosition(0);
 	
@@ -147,11 +138,8 @@
 	);
 	
 	uranus.ring.rotation.x = -45;
-	
 	uranus.addOrbit(19.2184, 0.04638, 6.48, 18.33, sun, 0xc2edee);
 	uranus.updatePosition(0);
-	
-	
 	
 	const neptune = new StellarObject(
 	  24.622,
@@ -167,39 +155,17 @@
 	  "./textures/pluto/pluto_diffuse.jpg",
 	  sun.obj
 	)
-	
 	pluto.addOrbit(39.48, 0.2488, 17.16, 29.659, sun, 0xc29a6d);
 	pluto.updatePosition(0);
-	controls = new THREE.OrbitControls(camera, renderer.domElement);
-	controls.target = earth.obj.position;
-	camera.position = earth.position;
 	
-	window.mercury = mercury;
+	SceneManager.controls.target = sun.obj.position;
 	
-	// Create an event listener that resizes the renderer with the browser window.
-	window.addEventListener('resize', function() {
-	  var WIDTH = window.innerWidth,
-	      HEIGHT = window.innerHeight;
-	  renderer.setSize(WIDTH, HEIGHT);
-	  camera.aspect = WIDTH / HEIGHT;
-	  camera.updateProjectionMatrix();
-	});
+	window.earth = earth;
+	window.sceneManager = SceneManager;
 	
-	let time = clock.getElapsedTime();
-	let delta = clock.getDelta();
-	
-	var render = function () {
-	  time = clock.getElapsedTime();
-	  delta = clock.getDelta();
-	
-	  requestAnimationFrame( render );
-	
-	
-	  renderer.render(scene, camera);
-	  controls.update();
-	};
-	
-	render();
+	SceneManager.camera.position.x = -309000;
+	SceneManager.camera.position.y = 441000;
+	SceneManager.camera.position.z = 236000;
 
 
 /***/ },
@@ -207,11 +173,14 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const MathHelper = __webpack_require__ (2);
+	const SimObject = __webpack_require__ (5);
 	
-	const ORBIT_POINTS = 500;
+	const ORBIT_POINTS = 100;
 	
-	class StellarObject {
+	class StellarObject extends SimObject {
 	  constructor (size, tex_file, parent) {
+	    super();
+	
 	    this.obj = new THREE.Object3D();
 	    this.orbit = null;
 	    this.orbitCurve = null;
@@ -253,9 +222,9 @@
 	    );
 	
 	    var path = new THREE.Path( curve.getPoints(ORBIT_POINTS) );
+	
 	    var geometry = path.createPointsGeometry(ORBIT_POINTS);
 	    var material = new THREE.LineBasicMaterial( { color : color } );
-	
 	
 	    // Rotate orbit by 90 deg to have it sit on the correct plane, then apply inclination
 	    geometry.rotateX(MathHelper.degToRad(90 + inclination));
@@ -264,7 +233,6 @@
 	    this.orbit = new THREE.Line( geometry, material );
 	
 	    this.geometry = geometry;
-	
 	    root.obj.add(this.orbit)
 	  }
 	
@@ -283,18 +251,53 @@
 	  }
 	
 	  updatePosition (newPositionOnOrbit) {
-	    if (this.orbitCurve === undefined) {
+	    if (this.geometry === undefined) {
 	      return;
 	    }
-	    let geometryIndex = Math.round(newPositionOnOrbit * ORBIT_POINTS);
-	    let newPos = this.geometry.vertices[geometryIndex];
-	    this.obj.position.x = newPos.x;
-	    this.obj.position.y = newPos.y;
-	    this.obj.position.z = newPos.z;
+	
+	    let idxLower = Math.floor(newPositionOnOrbit * ORBIT_POINTS);
+	    let idxHigher = idxLower + 1;
+	
+	    let lowerSectionBound = idxLower / ORBIT_POINTS;
+	    let higherSectionBound = idxHigher / ORBIT_POINTS;
+	
+	    let sectionSize = higherSectionBound - lowerSectionBound;
+	    let sectionPercentage = ((newPositionOnOrbit - lowerSectionBound) / sectionSize);
+	
+	    if (idxHigher > ORBIT_POINTS) {
+	      idxHigher = 0;
+	    };
+	
+	    let pos1 = this.geometry.vertices[idxLower];
+	    let pos2 = this.geometry.vertices[idxHigher];
+	
+	    let v1 = new THREE.Vector3(pos1.x, pos1.y, pos1.z);
+	    v1.lerp(pos2, sectionPercentage);
+	
+	    this.obj.position.x = v1.x;
+	    this.obj.position.y = v1.y;
+	    this.obj.position.z = v1.z;
+	  }
+	
+	  updateLabelPosition () {
+	    var vector = new THREE.Vector3();
+	    var canvas = this.sceneManager.renderer.domElement;
+	
+	    vector.set( this.obj.position.x, this.obj.position.y, this.obj.position.z );
+	
+	    // map to normalized device coordinate (NDC) space
+	    vector.project(this.sceneManager.camera);
+	
+	    // map to 2D screen space
+	    vector.x = Math.round( (   vector.x + 1 ) * canvas.width  / 2 );
+	    vector.y = Math.round( ( - vector.y + 1 ) * canvas.height / 2 );
+	    vector.z = 0;
 	  }
 	
 	  update(delta) {
-	    this.positionOnOrbit = ((positionOnOrbit + delta) % 1);
+	    this.positionOnOrbit = ((this.positionOnOrbit + delta * 10) % 1);
+	    this.updatePosition(this.positionOnOrbit);
+	    this.updateLabelPosition();
 	  }
 	}
 	
@@ -326,6 +329,96 @@
 	  radToDeg: radToDeg,
 	  auToUnits: auToUnits,
 	  minorAxis: minorAxis,
+	};
+
+
+/***/ },
+/* 3 */,
+/* 4 */,
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const SceneManager = __webpack_require__ (6);
+	
+	class SimObject {
+	  constructor () {
+	    SceneManager.initSimObject(this);
+	    this.obj = new THREE.Object3D();
+	    this.sceneManager = SceneManager;
+	  };
+	
+	  // Update is called once per frame
+	  update (delta) { }
+	}
+	
+	module.exports = SimObject;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	// Set up references
+	const scene = new THREE.Scene();
+	const clock = new THREE.Clock();
+	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 10, 1000000000000 );
+	const renderer = new THREE.WebGLRenderer({ antialias: true });
+	
+	let simObjects = [];
+	const controls = new THREE.OrbitControls(camera, renderer.domElement);
+	
+	const initScene = function () {
+	  // Set size to fullscreen
+	  renderer.setSize( window.innerWidth, window.innerHeight );
+	
+	  // append renderer to document
+	  document.body.appendChild( renderer.domElement );
+	
+	  // Create an event listener that resizes the renderer with the browser window.
+	  window.addEventListener('resize', function() {
+	    var WIDTH = window.innerWidth,
+	        HEIGHT = window.innerHeight;
+	    renderer.setSize(WIDTH, HEIGHT);
+	    camera.aspect = WIDTH / HEIGHT;
+	    camera.updateProjectionMatrix();
+	  });
+	
+	  rootObject = new THREE.Object3D();
+	  rootObject.position.x = 1;
+	
+	  controls.target = rootObject.position;
+	
+	  // Start simulation and render loop
+	  render();
+	}
+	
+	const render = function () {
+	  time = clock.getElapsedTime();
+	  delta = clock.getDelta();
+	  requestAnimationFrame(render);
+	
+	  // Update all active simulation objects with the current delta
+	  simObjects.forEach(obj => {
+	    obj.update(delta);
+	  })
+	
+	  controls.update();
+	
+	  renderer.render(scene, camera);
+	}
+	
+	const initSimObject = function (newObject) {
+	  simObjects.push(newObject);
+	}
+	
+	module.exports = {
+	  initScene: initScene,
+	  scene: scene,
+	  clock: clock,
+	  camera: camera,
+	  renderer: renderer,
+	  initSimObject: initSimObject,
+	  controls: controls,
 	};
 
 
