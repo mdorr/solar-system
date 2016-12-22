@@ -45,9 +45,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const StellarObject = __webpack_require__ (1);
+	const MathHelper = __webpack_require__ (2);
+	
 	
 	var scene = new THREE.Scene();
-	var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 100000 );
+	var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 10, 1000000000 );
 	
 	var renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -66,20 +68,23 @@
 	  "./textures/mercury/mercury_diffuse.jpg",
 	  sun.obj
 	)
-	mercury.obj.position.x = 1000;
+	mercury.addOrbit(0.3871, 0.20563, 3.38, sun);
 	
 	const venus = new StellarObject(
 	  6.052,
 	  "./textures/venus/venus_diffuse.jpg",
 	  sun.obj
 	)
-	venus.obj.position.x = 1250;
+	
+	venus.addOrbit(0.7233, 0.0067, 3.86, sun);
 	
 	const earth = new StellarObject(
 	  6.371,
 	  "./textures/earth/earth_diffuse.jpg",
 	  sun.obj
 	)
+	
+	earth.addOrbit(1, 0.0167, 7.16, sun);
 	earth.obj.position.x = 1500;
 	
 	const moon = new StellarObject(
@@ -96,12 +101,16 @@
 	)
 	mars.obj.position.x = 2000;
 	
+	mars.addOrbit(1.524 , 0.0934, 5.65, sun);
+	
+	
 	const jupiter = new StellarObject(
 	  69.911,
 	  "./textures/jupiter/jupiter_diffuse.jpg",
 	  sun.obj
 	)
-	jupiter.obj.position.x = 2500;
+	
+	jupiter.addOrbit(5.2026, 0.048498, 6.09, sun);
 	
 	const saturn = new StellarObject(
 	  58.262,
@@ -119,6 +128,7 @@
 	saturn.obj.position.x = 2750;
 	saturn.ring.rotation.x = -45;
 	
+	saturn.addOrbit(9.5549, 0.05555, 5.51, sun);
 	
 	
 	const uranus = new StellarObject(
@@ -137,6 +147,8 @@
 	uranus.obj.position.x = 3000;
 	uranus.ring.rotation.x = -45;
 	
+	uranus.addOrbit(19.2184, 0.04638, 6.48, sun);
+	
 	
 	
 	
@@ -147,6 +159,8 @@
 	)
 	neptune.obj.position.x = 3250;
 	
+	neptune.addOrbit(30.1104, 0.0094, 6.34, sun);
+	
 	const pluto = new StellarObject(
 	  1.187,
 	  "./textures/pluto/pluto_diffuse.jpg",
@@ -154,32 +168,17 @@
 	)
 	pluto.obj.position.x = 3500;
 	
-	
-	
-	
-	var imagePrefix = "./../textures/skybox/";
-	var directions  = ["posx", "negx", "posy", "negy", "posz", "negz"];
-	var imageSuffix = ".png";
-	var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );
-	
-	var materialArray = [];
-	for (var i = 0; i < 6; i++)
-	  materialArray.push( new THREE.MeshBasicMaterial({
-	    map: THREE.ImageUtils.loadTexture( imagePrefix + directions[i] + imageSuffix ),
-	    side: THREE.BackSide
-	  }));
-	var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
-	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
-	scene.add( skyBox );
-	
-	
-	
+	pluto.addOrbit(39.48, 0.2488, 17.16, sun);
 	
 	controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.target = earth.obj.position;
 	camera.position = earth.position;
-	// Create an event listener that resizes the renderer with the browser window.
 	
+	
+	window.MathHelper = MathHelper;
+	
+	//earthOrbit.rotateX(MathHelper.degToRad(90));
+	// Create an event listener that resizes the renderer with the browser window.
 	window.addEventListener('resize', function() {
 	  var WIDTH = window.innerWidth,
 	      HEIGHT = window.innerHeight;
@@ -198,8 +197,6 @@
 	  requestAnimationFrame( render );
 	
 	
-	  earth.obj.rotation.y += delta * 10000;
-	
 	  renderer.render(scene, camera);
 	  controls.update();
 	};
@@ -209,22 +206,55 @@
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	const MathHelper = __webpack_require__ (2);
+	
 	class StellarObject {
-	  constructor ( size, tex_file, parent ) {
-	    this.obj = new THREE.Mesh(
+	  constructor (size, tex_file, parent) {
+	    this.obj = new THREE.Object3D();
+	    this.addBody(size, tex_file);
+	    parent.add(this.obj);
+	  }
+	
+	  addBody (size, tex_file) {
+	    let body = new THREE.Mesh(
 	      new THREE.SphereGeometry(size, 64, 64),
 	      new THREE.MeshBasicMaterial({
 	        map: new THREE.TextureLoader().load(tex_file)
 	      })
 	    );
-	    parent.add(this.obj);
+	    this.obj.add(body);
+	  }
+	
+	
+	  addOrbit (semiMajorAxis, eccentricity, inclination, root) {
+	    let semiMinorAxis = MathHelper.minorAxis(semiMajorAxis, eccentricity);
+	
+	    var curve = new THREE.EllipseCurve(
+	    	root.obj.position.x,  root.obj.position.y,
+	    	MathHelper.auToUnits(semiMajorAxis), MathHelper.auToUnits(semiMinorAxis),
+	    	0,  2 * Math.PI,  // aStartAngle, aEndAngle
+	    	false,            // aClockwise
+	    	0                 // aRotation
+	    );
+	
+	    var path = new THREE.Path( curve.getPoints( 500 ) );
+	    var geometry = path.createPointsGeometry( 500 );
+	    var material = new THREE.LineBasicMaterial( { color : 0x444444 } );
+	
+	    // Create the final object to add to the scene
+	    var orbit = new THREE.Line( geometry, material );
+	
+	    // Rotate orbit by 90 deg to have it sit on the correct plane, then apply inclination
+	    orbit.rotateX(MathHelper.degToRad(90 + inclination));
+	
+	    root.obj.add( orbit )
 	  }
 	
 	  addRing (innerRadius, outerRadius, tex_file, alpha_map) {
 	    let ringGeometry = new THREE.RingGeometry(innerRadius, outerRadius, 64)
-	  
+	
 	    this.ring = new THREE.Mesh(
 	      ringGeometry,
 	      new THREE.MeshBasicMaterial({
@@ -235,11 +265,37 @@
 	    )
 	    this.obj.add(this.ring);
 	  }
-	
-	
 	}
 	
 	module.exports = StellarObject;
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	const degToRad = function (deg) {
+	  return deg * (Math.PI / 180);
+	}
+	
+	const radToDeg = function (rad) {
+	  return rad * (180 / Math.PI);
+	}
+	
+	const auToUnits = function (au) {
+	  return au * 149597.8707;
+	}
+	
+	const minorAxis = function (majorAxis, eccentricity) {
+	  return majorAxis * Math.sqrt(1 - Math.pow(eccentricity, 2));
+	}
+	
+	module.exports = {
+	  degToRad: degToRad,
+	  radToDeg: radToDeg,
+	  auToUnits: auToUnits,
+	  minorAxis: minorAxis,
+	};
 
 
 /***/ }
