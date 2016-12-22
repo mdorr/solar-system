@@ -69,6 +69,7 @@
 	  sun.obj
 	)
 	mercury.addOrbit(0.3871, 0.20563, 3.38, 0.3075, sun, 0x616569);
+	mercury.updatePosition(0);
 	
 	const venus = new StellarObject(
 	  6.052,
@@ -77,15 +78,17 @@
 	)
 	
 	venus.addOrbit(0.7233, 0.0067, 3.86, 0.7184, sun, 0x8f8d77);
+	venus.updatePosition(0);
 	
 	const earth = new StellarObject(
 	  6.371,
 	  "./textures/earth/earth_diffuse.jpg",
 	  sun.obj
 	)
+	earth.obj.position.x += 1;
 	
 	earth.addOrbit(1, 0.0167, 7.16, 0.9833, sun, 0x4d65a4);
-	earth.obj.position.x = 1500;
+	earth.updatePosition(0);
 	
 	const moon = new StellarObject(
 	  1.7371,
@@ -99,10 +102,8 @@
 	  "./textures/mars/mars_diffuse.jpg",
 	  sun.obj
 	)
-	mars.obj.position.x = 2000;
-	
 	mars.addOrbit(1.524 , 0.0934, 5.65, 1.3814, sun, 0x79260f);
-	
+	mars.updatePosition(0);
 	
 	const jupiter = new StellarObject(
 	  69.911,
@@ -111,6 +112,7 @@
 	)
 	
 	jupiter.addOrbit(5.2026, 0.048498, 6.09, 4.95029, sun, 0xd4b48d);
+	jupiter.updatePosition(0);
 	
 	const saturn = new StellarObject(
 	  58.262,
@@ -125,11 +127,11 @@
 	  "./textures/saturn/saturn_ring_trans.jpg"
 	);
 	
-	saturn.obj.position.x = 2750;
+	
 	saturn.ring.rotation.x = -45;
 	
 	saturn.addOrbit(9.5549, 0.05555, 5.51, 9.024, sun, 0xceaf58);
-	
+	saturn.updatePosition(0);
 	
 	const uranus = new StellarObject(
 	  25.362,
@@ -144,11 +146,10 @@
 	  "./textures/uranus/uranus_ring_trans.jpg"
 	);
 	
-	uranus.obj.position.x = 3000;
 	uranus.ring.rotation.x = -45;
 	
 	uranus.addOrbit(19.2184, 0.04638, 6.48, 18.33, sun, 0xc2edee);
-	
+	uranus.updatePosition(0);
 	
 	
 	
@@ -157,27 +158,24 @@
 	  "./textures/neptune/neptune_diffuse.jpg",
 	  sun.obj
 	)
-	neptune.obj.position.x = 3250;
 	
 	neptune.addOrbit(30.1104, 0.0094, 6.34, 29.81, sun, 0x3448ff);
+	neptune.updatePosition(0);
 	
 	const pluto = new StellarObject(
 	  1.187,
 	  "./textures/pluto/pluto_diffuse.jpg",
 	  sun.obj
 	)
-	pluto.obj.position.x = 3500;
 	
 	pluto.addOrbit(39.48, 0.2488, 17.16, 29.659, sun, 0xc29a6d);
-	
+	pluto.updatePosition(0);
 	controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.target = earth.obj.position;
 	camera.position = earth.position;
 	
+	window.mercury = mercury;
 	
-	window.MathHelper = MathHelper;
-	
-	//earthOrbit.rotateX(MathHelper.degToRad(90));
 	// Create an event listener that resizes the renderer with the browser window.
 	window.addEventListener('resize', function() {
 	  var WIDTH = window.innerWidth,
@@ -210,13 +208,17 @@
 
 	const MathHelper = __webpack_require__ (2);
 	
+	const ORBIT_POINTS = 500;
+	
 	class StellarObject {
 	  constructor (size, tex_file, parent) {
 	    this.obj = new THREE.Object3D();
-	    this.addBody(size, tex_file);
 	    this.orbit = null;
+	    this.orbitCurve = null;
 	    this.ring = null;
+	    this.positionOnOrbit = 0;
 	    parent.add(this.obj);
+	    this.addBody(size, tex_file);
 	  }
 	
 	  addBody (size, tex_file) {
@@ -237,6 +239,7 @@
 	  // root: The object this orbit is attached to. Should be the sun
 	  // color: The color the orbit is drawn in.
 	  addOrbit (semiMajorAxis, eccentricity, inclination, perihelion, root, color = 0x44444) {
+	
 	    let semiMinorAxis = MathHelper.minorAxis(semiMajorAxis, eccentricity);
 	    let ellipseCenterX =
 	      root.obj.position.x - MathHelper.auToUnits((semiMajorAxis - perihelion));
@@ -249,15 +252,18 @@
 	    	0                 // aRotation
 	    );
 	
-	    var path = new THREE.Path( curve.getPoints( 500 ) );
-	    var geometry = path.createPointsGeometry( 500 );
+	    var path = new THREE.Path( curve.getPoints(ORBIT_POINTS) );
+	    var geometry = path.createPointsGeometry(ORBIT_POINTS);
 	    var material = new THREE.LineBasicMaterial( { color : color } );
+	
+	
+	    // Rotate orbit by 90 deg to have it sit on the correct plane, then apply inclination
+	    geometry.rotateX(MathHelper.degToRad(90 + inclination));
 	
 	    // Create the final object to add to the scene
 	    this.orbit = new THREE.Line( geometry, material );
 	
-	    // Rotate orbit by 90 deg to have it sit on the correct plane, then apply inclination
-	    this.orbit.rotateX(MathHelper.degToRad(90 + inclination));
+	    this.geometry = geometry;
 	
 	    root.obj.add(this.orbit)
 	  }
@@ -274,6 +280,21 @@
 	      })
 	    )
 	    this.obj.add(this.ring);
+	  }
+	
+	  updatePosition (newPositionOnOrbit) {
+	    if (this.orbitCurve === undefined) {
+	      return;
+	    }
+	    let geometryIndex = Math.round(newPositionOnOrbit * ORBIT_POINTS);
+	    let newPos = this.geometry.vertices[geometryIndex];
+	    this.obj.position.x = newPos.x;
+	    this.obj.position.y = newPos.y;
+	    this.obj.position.z = newPos.z;
+	  }
+	
+	  update(delta) {
+	    this.positionOnOrbit = ((positionOnOrbit + delta) % 1);
 	  }
 	}
 	
