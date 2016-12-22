@@ -214,6 +214,8 @@
 	  constructor (size, tex_file, parent) {
 	    this.obj = new THREE.Object3D();
 	    this.addBody(size, tex_file);
+	    this.orbit = null;
+	    this.ring = null;
 	    parent.add(this.obj);
 	  }
 	
@@ -252,12 +254,12 @@
 	    var material = new THREE.LineBasicMaterial( { color : color } );
 	
 	    // Create the final object to add to the scene
-	    var orbit = new THREE.Line( geometry, material );
+	    this.orbit = new THREE.Line( geometry, material );
 	
 	    // Rotate orbit by 90 deg to have it sit on the correct plane, then apply inclination
-	    orbit.rotateX(MathHelper.degToRad(90 + inclination));
+	    this.orbit.rotateX(MathHelper.degToRad(90 + inclination));
 	
-	    root.obj.add( orbit )
+	    root.obj.add(this.orbit)
 	  }
 	
 	  addRing (innerRadius, outerRadius, tex_file, alpha_map) {
