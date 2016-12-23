@@ -1,5 +1,6 @@
 body {
   font-family: 'Titillium Web', sans-serif;
+  overflow: hidden;
 }
 
 canvas {
@@ -16,6 +17,9 @@ canvas {
   font-size:10px;
   z-index:50;
   transition: font-size 0.2s ease-in-out;
+  white-space: nowrap;
+  overflow: hidden;
+
 }
 
 
