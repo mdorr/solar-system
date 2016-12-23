@@ -2,8 +2,29 @@
 	<head>
 		<title>The Solar System</title>
 
+		<script type="application/x-glsl" id="sky-vertex">
+		varying vec2 vUV;
+
+		void main() {
+		  vUV = uv;
+		  vec4 pos = vec4(position, 1.0);
+		  gl_Position = projectionMatrix * modelViewMatrix * pos;
+		}
+		</script>
+
+		<script type="application/x-glsl" id="sky-fragment">
+		uniform sampler2D texture;
+		varying vec2 vUV;
+
+		void main() {
+		  vec4 sample = texture2D(texture, vUV);
+		  gl_FragColor = vec4(sample.xyz, sample.w);
+		}
+		</script> 
+
 	</head>
-	<body>
+	<body id="body">
+		<script src="js/jquery/jquery-3.1.1.min.js"></script>
 		<script src="js/three/three.js"></script>
     <script src="js/three/OrbitControls.js"></script>
 		<script src="js/bundle/bundle.js"></script>
@@ -11,5 +32,21 @@
 		<link rel="stylesheet" href="css/reset.css">
 		<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
 		<link rel="stylesheet" href="css/solar.css">
+
+
+
+
+
+		<script>
+			const $listItems = $("div");
+
+			$.each($listItems, function(index, value) {
+				$(value).on("click", event => {
+					console.log(event.currentTarget.innerText);
+					window.domInput.receivePlanetTarget(event.currentTarget.innerText);
+				});
+			});
+		</script>
+
 	</body>
 </html>

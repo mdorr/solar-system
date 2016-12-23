@@ -45,8 +45,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const StellarObject = __webpack_require__ (1);
+	const SkySphere = __webpack_require__ (6);
 	const MathHelper = __webpack_require__ (2);
-	const SceneManager = __webpack_require__ (3);
+	const SceneManager = __webpack_require__ (4);
+	const DomInput = __webpack_require__ (5);
 	
 	SceneManager.initScene();
 	
@@ -58,6 +60,8 @@
 	)
 	sun.obj.position.x = 1; // Hack to prevent issue with controls; Orbitcontrols fail when position is (0,0,0)
 	
+	SceneManager.planets.push(sun);
+	
 	const mercury = new StellarObject(
 	  2.4397,
 	  "./textures/mercury/mercury_diffuse.jpg",
@@ -66,6 +70,8 @@
 	)
 	mercury.addOrbit(0.3871, 0.20563, 3.38, 0.3075, sun, 0x616569);
 	mercury.updatePosition(0);
+	
+	SceneManager.planets.push(mercury);
 	
 	const venus = new StellarObject(
 	  6.052,
@@ -77,6 +83,9 @@
 	venus.addOrbit(0.7233, 0.0067, 3.86, 0.7184, sun, 0x8f8d77);
 	venus.updatePosition(0);
 	
+	SceneManager.planets.push(venus);
+	
+	
 	const earth = new StellarObject(
 	  6.371,
 	  "./textures/earth/earth_diffuse.jpg",
@@ -87,6 +96,8 @@
 	
 	earth.addOrbit(1, 0.0167, 7.16, 0.9833, sun, 0x4d65a4);
 	earth.updatePosition(0);
+	
+	SceneManager.planets.push(earth);
 	
 	// const moon = new StellarObject(
 	//   1.7371,
@@ -104,6 +115,8 @@
 	mars.addOrbit(1.524 , 0.0934, 5.65, 1.3814, sun, 0x79260f);
 	mars.updatePosition(0);
 	
+	SceneManager.planets.push(mars);
+	
 	const jupiter = new StellarObject(
 	  69.911,
 	  "./textures/jupiter/jupiter_diffuse.jpg",
@@ -112,6 +125,8 @@
 	)
 	jupiter.addOrbit(5.2026, 0.048498, 6.09, 4.95029, sun, 0xd4b48d);
 	jupiter.updatePosition(0);
+	
+	SceneManager.planets.push(jupiter);
 	
 	const saturn = new StellarObject(
 	  58.262,
@@ -131,6 +146,8 @@
 	saturn.addOrbit(9.5549, 0.05555, 5.51, 9.024, sun, 0xceaf58);
 	saturn.updatePosition(0);
 	
+	SceneManager.planets.push(saturn);
+	
 	const uranus = new StellarObject(
 	  25.362,
 	  "./textures/uranus/uranus_diffuse.jpg",
@@ -148,6 +165,7 @@
 	uranus.ring.rotation.x = -45;
 	uranus.addOrbit(19.2184, 0.04638, 6.48, 18.33, sun, 0xc2edee);
 	uranus.updatePosition(0);
+	SceneManager.planets.push(uranus);
 	
 	const neptune = new StellarObject(
 	  24.622,
@@ -158,6 +176,7 @@
 	
 	neptune.addOrbit(30.1104, 0.0094, 6.34, 29.81, sun, 0x3448ff);
 	neptune.updatePosition(0);
+	SceneManager.planets.push(neptune);
 	
 	const pluto = new StellarObject(
 	  1.187,
@@ -167,11 +186,20 @@
 	)
 	pluto.addOrbit(39.48, 0.2488, 17.16, 29.659, sun, 0xc29a6d);
 	pluto.updatePosition(0);
+	SceneManager.planets.push(pluto);
+	
+	const skysphere = new SkySphere(
+	  "./textures/stars/starsphere.jpg",
+	  SceneManager.scene
+	);
+	
 	
 	SceneManager.controls.target = sun.obj.position;
 	
 	window.earth = earth;
 	window.sceneManager = SceneManager;
+	
+	window.domInput = DomInput;
 	
 	SceneManager.camera.position.x = -309000;
 	SceneManager.camera.position.y = 441000;
@@ -183,9 +211,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const MathHelper = __webpack_require__ (2);
-	const SimObject = __webpack_require__ (4);
+	const SimObject = __webpack_require__ (3);
 	
-	const ORBIT_POINTS = 100;
+	const ORBIT_POINTS = 500;
 	
 	class StellarObject extends SimObject {
 	  constructor (size, tex_file, parent, name) {
@@ -337,8 +365,8 @@
 	  }
 	
 	  update(delta) {
-	    this.positionOnOrbit = ((this.positionOnOrbit + delta * 10) % 1);
-	    this.updatePosition(this.positionOnOrbit);
+	//    this.positionOnOrbit = ((this.positionOnOrbit + delta * 10) % 1);
+	//    this.updatePosition(this.positionOnOrbit);
 	    this.updateLabelPosition();
 	  }
 	}
@@ -376,6 +404,26 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const SceneManager = __webpack_require__ (4);
+	
+	class SimObject {
+	  constructor () {
+	    SceneManager.initSimObject(this);
+	    this.obj = new THREE.Object3D();
+	    this.sceneManager = SceneManager;
+	  };
+	
+	  // Update is called once per frame
+	  update (delta) { }
+	}
+	
+	module.exports = SimObject;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports) {
 
 	// Set up references
@@ -385,6 +433,8 @@
 	const renderer = new THREE.WebGLRenderer({ antialias: true });
 	var frustum = new THREE.Frustum();
 	var cameraViewProjectionMatrix = new THREE.Matrix4();
+	
+	let planets = [];
 	
 	let simObjects = [];
 	const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -447,28 +497,69 @@
 	  renderer: renderer,
 	  initSimObject: initSimObject,
 	  controls: controls,
-	  frustum: frustum
+	  frustum: frustum,
+	  planets: planets
 	};
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const SceneManager = __webpack_require__ (3);
+	const SceneManager = __webpack_require__ (4);
 	
-	class SimObject {
-	  constructor () {
-	    SceneManager.initSimObject(this);
-	    this.obj = new THREE.Object3D();
-	    this.sceneManager = SceneManager;
-	  };
-	
-	  // Update is called once per frame
-	  update (delta) { }
+	const receivePlanetTarget = function (target) {
+	  for (let i = 0; i < SceneManager.planets.length; i++) {
+	    if (SceneManager.planets[i].name == target) {
+	      SceneManager.controls.target = SceneManager.planets[i].obj.position;
+	      console.log("Updating target");
+	      break;
+	    }
+	  }
 	}
 	
-	module.exports = SimObject;
+	module.exports = {
+	  receivePlanetTarget: receivePlanetTarget,
+	}
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const MathHelper = __webpack_require__ (2);
+	const SimObject = __webpack_require__ (3);
+	
+	const SKYSPHERE_SIZE_AU = 60;
+	
+	class SkySphere extends SimObject {
+	  constructor (tex_file, parent) {
+	    super();
+	
+	
+	    let geometry = new THREE.SphereGeometry(MathHelper.auToUnits(SKYSPHERE_SIZE_AU), 32, 32);
+	
+	    let uniforms = {
+	      texture: { type: 't', value: THREE.ImageUtils.loadTexture(tex_file) }
+	    };
+	
+	    let material = new THREE.ShaderMaterial( {
+	      uniforms:       uniforms,
+	      vertexShader:   document.getElementById('sky-vertex').innerHTML,
+	      fragmentShader: document.getElementById('sky-fragment').innerHTML
+	    });
+	
+	    let skysphere = new THREE.Mesh(geometry, material);
+	
+	    skysphere.scale.set(-1, 1, 1);
+	    skysphere.eulerOrder = 'XZY';
+	    skysphere.renderDepth = 1000.0;
+	
+	    parent.add(skysphere);
+	  }
+	}
+	
+	module.exports = SkySphere;
 
 
 /***/ }
