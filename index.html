@@ -26,6 +26,7 @@
 	<body id="body">
 		<script src="js/jquery/jquery-3.1.1.min.js"></script>
 		<script src="js/three/three.js"></script>
+		<script src="js/three/RingGeometry2.js"></script>
     <script src="js/three/OrbitControls.js"></script>
 		<script src="js/bundle/bundle.js"></script>
 
@@ -42,7 +43,6 @@
 
 			$.each($listItems, function(index, value) {
 				$(value).on("click", event => {
-					console.log(event.currentTarget.innerText);
 					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
 				});
 			});

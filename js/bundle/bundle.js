@@ -66,7 +66,8 @@
 	  2.4397,
 	  "./textures/mercury/mercury_diffuse.jpg",
 	  sun.obj,
-	  "Mercury"
+	  "Mercury",
+	  0.01
 	)
 	mercury.addOrbit(0.3871, 0.20563, 3.38, 0.3075, sun, 0x616569);
 	mercury.updatePosition(0);
@@ -77,7 +78,8 @@
 	  6.052,
 	  "./textures/venus/venus_diffuse.jpg",
 	  sun.obj,
-	  "Venus"
+	  "Venus",
+	  2.64
 	)
 	
 	venus.addOrbit(0.7233, 0.0067, 3.86, 0.7184, sun, 0x8f8d77);
@@ -90,7 +92,8 @@
 	  6.371,
 	  "./textures/earth/earth_diffuse.jpg",
 	  sun.obj,
-	  "Earth"
+	  "Earth",
+	  23.93
 	)
 	earth.obj.position.x += 1;
 	
@@ -110,7 +113,8 @@
 	  3.3895,
 	  "./textures/mars/mars_diffuse.jpg",
 	  sun.obj,
-	  "Mars"
+	  "Mars",
+	  25.19
 	)
 	mars.addOrbit(1.524 , 0.0934, 5.65, 1.3814, sun, 0x79260f);
 	mars.updatePosition(0);
@@ -121,7 +125,8 @@
 	  69.911,
 	  "./textures/jupiter/jupiter_diffuse.jpg",
 	  sun.obj,
-	  "Jupiter"
+	  "Jupiter",
+	  3.12
 	)
 	jupiter.addOrbit(5.2026, 0.048498, 6.09, 4.95029, sun, 0xd4b48d);
 	jupiter.updatePosition(0);
@@ -132,14 +137,14 @@
 	  58.262,
 	  "./textures/saturn/saturn_diffuse.jpg",
 	  sun.obj,
-	  "Saturn"
+	  "Saturn",
+	  26.73
 	)
 	
 	saturn.addRing(
 	  (58.262 + 6.630),
 	  (58.262 + 120.7),
-	  "./textures/saturn/saturn_ring_diffuse.jpg",
-	  "./textures/saturn/saturn_ring_trans.jpg"
+	  "./textures/saturn/saturn_ring_diffuse.png"
 	);
 	
 	saturn.ring.rotation.x = -45;
@@ -152,7 +157,8 @@
 	  25.362,
 	  "./textures/uranus/uranus_diffuse.jpg",
 	  sun.obj,
-	  "Uranus"
+	  "Uranus",
+	  82.23
 	)
 	
 	uranus.addRing(
@@ -171,7 +177,8 @@
 	  24.622,
 	  "./textures/neptune/neptune_diffuse.jpg",
 	  sun.obj,
-	  "Neptune"
+	  "Neptune",
+	  28.33
 	)
 	
 	neptune.addOrbit(30.1104, 0.0094, 6.34, 29.81, sun, 0x3448ff);
@@ -182,7 +189,8 @@
 	  1.187,
 	  "./textures/pluto/pluto_diffuse.jpg",
 	  sun.obj,
-	  "Pluto"
+	  "Pluto",
+	  60.41
 	)
 	pluto.addOrbit(39.48, 0.2488, 17.16, 29.659, sun, 0xc29a6d);
 	pluto.updatePosition(0);
@@ -193,6 +201,12 @@
 	  SceneManager.scene
 	);
 	
+	let light = new THREE.PointLight(0xffffff, 1, 0, 0)
+	light.position.set(0, 0, 0);
+	SceneManager.scene.add(light);
+	
+	let ambientLight = new THREE.AmbientLight(0x2f2a1b);
+	SceneManager.scene.add(ambientLight);
 	
 	
 	SceneManager.controls.target = sun.obj.position;
@@ -221,7 +235,7 @@
 	let hideLabel = false;
 	
 	class StellarObject extends SimObject {
-	  constructor (size, tex_file, parent, name) {
+	  constructor (size, tex_file, parent, name, axialTilt) {
 	    super();
 	    this.size = size;
 	    this.obj = new THREE.Object3D();
@@ -232,18 +246,29 @@
 	    this.label = undefined;
 	    this.name = name;
 	    parent.add(this.obj);
-	    this.addBody(size, tex_file);
+	    this.addBody(size, tex_file, axialTilt);
 	    this.addLabel(this.name);
 	  }
 	
-	  addBody (size, tex_file) {
+	  addBody (size, tex_file, axialTilt) {
+	    let geometry = new THREE.SphereGeometry(size, 64, 64);
+	    let material = new THREE.MeshLambertMaterial({
+	      map: new THREE.TextureLoader().load(tex_file)
+	    });
+	
+	    if (axialTilt) {
+	      geometry.rotateX(MathHelper.degToRad(axialTilt));
+	    }
+	
 	    let body = new THREE.Mesh(
-	      new THREE.SphereGeometry(size, 64, 64),
-	      new THREE.MeshBasicMaterial({
-	        map: new THREE.TextureLoader().load(tex_file)
-	      })
+	      geometry,
+	      material
 	    );
+	
+	
 	    this.obj.add(body);
+	
+	
 	    this.body = body;
 	  }
 	
@@ -283,16 +308,32 @@
 	    root.obj.add(this.orbit)
 	  }
 	
-	  addRing (innerRadius, outerRadius, tex_file, alpha_map) {
-	    let ringGeometry = new THREE.RingGeometry(innerRadius, outerRadius, 64)
+	  addRing (innerRadius, outerRadius, texFile, alphaMap) {
+	
+	    let ringGeometry = new THREE.RingGeometry2(innerRadius, outerRadius, 180, 1, 0, Math.PI * 2);
+	    ringGeometry.computeFaceNormals();
+	
+	    let material;
+	
+	    if (alphaMap) {
+	      material = new THREE.MeshBasicMaterial({
+	        map: new THREE.TextureLoader().load(texFile),
+	        alphaMap: new THREE.TextureLoader().load(alphaMap),
+	        transparent: true,
+	        side: THREE.DoubleSide
+	      });
+	    } else {
+	      material = new THREE.MeshBasicMaterial({
+	        map: new THREE.TextureLoader().load(texFile),
+	        transparent: true,
+	        side: THREE.DoubleSide
+	      });
+	    }
+	
 	
 	    this.ring = new THREE.Mesh(
 	      ringGeometry,
-	      new THREE.MeshBasicMaterial({
-	        map: new THREE.TextureLoader().load(tex_file),
-	        alphaMap: new THREE.TextureLoader().load(alpha_map),
-	        transparent: true
-	      })
+	      material
 	    )
 	    this.obj.add(this.ring);
 	  }
@@ -436,7 +477,7 @@
 	// Set up references
 	const scene = new THREE.Scene();
 	const clock = new THREE.Clock();
-	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 10, 1000000000 );
+	const camera = new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 10, 1000000000 );
 	const renderer = new THREE.WebGLRenderer({ antialias: true });
 	var frustum = new THREE.Frustum();
 	var cameraViewProjectionMatrix = new THREE.Matrix4();
