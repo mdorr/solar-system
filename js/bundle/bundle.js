@@ -45,10 +45,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const StellarObject = __webpack_require__ (1);
-	const SkySphere = __webpack_require__ (6);
+	const SkySphere = __webpack_require__ (5);
 	const MathHelper = __webpack_require__ (2);
 	const SceneManager = __webpack_require__ (4);
-	const DomInput = __webpack_require__ (5);
+	const InputManager = __webpack_require__ (7);
 	
 	SceneManager.initScene();
 	
@@ -194,12 +194,15 @@
 	);
 	
 	
-	SceneManager.controls.target = sun.obj.position;
 	
+	SceneManager.controls.target = sun.obj.position;
+	SceneManager.controls.minDistance = 50;
+	
+	SceneManager.controls.maxDistance = MathHelper.auToUnits(50);
 	window.earth = earth;
 	window.sceneManager = SceneManager;
 	
-	window.domInput = DomInput;
+	window.inputManager = InputManager;
 	
 	SceneManager.camera.position.x = -309000;
 	SceneManager.camera.position.y = 441000;
@@ -215,10 +218,12 @@
 	
 	const ORBIT_POINTS = 500;
 	
+	let hideLabel = false;
+	
 	class StellarObject extends SimObject {
 	  constructor (size, tex_file, parent, name) {
 	    super();
-	
+	    this.size = size;
 	    this.obj = new THREE.Object3D();
 	    this.orbit = null;
 	    this.orbitCurve = null;
@@ -325,6 +330,12 @@
 	    this.obj.position.z = v1.z;
 	  }
 	
+	  toggleOrbit(newState) {
+	    if (this.orbit) {
+	      this.orbit.visible = newState;
+	    }
+	  }
+	
 	  addLabel(name) {
 	    let div = document.createElement('div');
 	    div.innerHTML = name;
@@ -332,17 +343,13 @@
 	    this.label = document.body.appendChild(div);
 	  }
 	
-	  clickLabel () {
-	    console.log("clicked " + this.name);
-	  }
-	
-	  updateLabelPosition () {
+	  updateLabel () {
 	    if (this.label === undefined || this.body === undefined ) {
 	      return;
 	    }
 	
 	    // check if object is on screen; if not, deactivate the label attached
-	    if (!this.sceneManager.frustum.intersectsObject(this.body)) {
+	    if (this.hideLabel || !this.sceneManager.frustum.intersectsObject(this.body)) {
 	      this.label.style.display = "none";
 	      return;
 	    }
@@ -360,14 +367,14 @@
 	    vector.y = Math.round( ( - vector.y + 1 ) * canvas.height / 2 );
 	
 	    this.label.style.display = "block";
-	    this.label.style.left = vector.x+"px";
-	    this.label.style.top = vector.y+"px";
+	    this.label.style.left = (vector.x-21)+"px";
+	    this.label.style.top = (vector.y-21)+"px";
 	  }
 	
 	  update(delta) {
 	//    this.positionOnOrbit = ((this.positionOnOrbit + delta * 10) % 1);
 	//    this.updatePosition(this.positionOnOrbit);
-	    this.updateLabelPosition();
+	    this.updateLabel();
 	  }
 	}
 	
@@ -429,14 +436,15 @@
 	// Set up references
 	const scene = new THREE.Scene();
 	const clock = new THREE.Clock();
-	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 10, 1000000000000 );
+	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 10, 1000000000 );
 	const renderer = new THREE.WebGLRenderer({ antialias: true });
 	var frustum = new THREE.Frustum();
 	var cameraViewProjectionMatrix = new THREE.Matrix4();
 	
 	let planets = [];
-	
 	let simObjects = [];
+	let rootObject = null;
+	
 	const controls = new THREE.OrbitControls(camera, renderer.domElement);
 	const initScene = function () {
 	  // Set size to fullscreen
@@ -498,33 +506,13 @@
 	  initSimObject: initSimObject,
 	  controls: controls,
 	  frustum: frustum,
-	  planets: planets
+	  planets: planets,
+	  rootObject: rootObject
 	};
 
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	const SceneManager = __webpack_require__ (4);
-	
-	const receivePlanetTarget = function (target) {
-	  for (let i = 0; i < SceneManager.planets.length; i++) {
-	    if (SceneManager.planets[i].name == target) {
-	      SceneManager.controls.target = SceneManager.planets[i].obj.position;
-	      console.log("Updating target");
-	      break;
-	    }
-	  }
-	}
-	
-	module.exports = {
-	  receivePlanetTarget: receivePlanetTarget,
-	}
-
-
-/***/ },
-/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const MathHelper = __webpack_require__ (2);
@@ -557,9 +545,76 @@
 	
 	    parent.add(skysphere);
 	  }
+	
 	}
 	
 	module.exports = SkySphere;
+
+
+/***/ },
+/* 6 */,
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const SceneManager = __webpack_require__ (4);
+	const MathHelper = __webpack_require__ (2);
+	
+	let targetedObject = null;
+	
+	const receivePlanetTarget = function (target) {
+	  for (let i = 0; i < SceneManager.planets.length; i++) {
+	    if (SceneManager.planets[i].name == target) {
+	
+	      targetObject(SceneManager.planets[i]);
+	      break;
+	    }
+	  }
+	}
+	
+	const targetObject = function (target) {
+	  if (target === targetedObject) {
+	    return;
+	  }
+	
+	  resetControls();
+	  targetedObject = target;
+	
+	  target.hideLabel = true;
+	  target.toggleOrbit(false);
+	
+	  let newCamPos = targetedObject.obj.position.clone();
+	  let tgtSize = targetedObject.size;
+	
+	  let distance = Math.max(20, target.size * 1.5);
+	  SceneManager.controls.minDistance = distance;
+	  SceneManager.controls.maxDistance = distance * 5;
+	
+	  SceneManager.camera.position.set(newCamPos.x + distance, newCamPos.y + distance, newCamPos.z + distance);
+	
+	  SceneManager.controls.target = targetedObject.obj.position;
+	}
+	
+	
+	const resetControls = function () {
+	  if (targetedObject) {
+	    targetedObject.hideLabel = false;
+	    targetedObject.toggleOrbit(true);
+	  }
+	  targetedObject = null;
+	
+	  SceneManager.controls.target = SceneManager.rootObject;
+	  SceneManager.controls.minDistance = 50;
+	  SceneManager.controls.maxDistance = MathHelper.auToUnits(50);
+	
+	  SceneManager.camera.position.x = -309000;
+	  SceneManager.camera.position.y = 441000;
+	  SceneManager.camera.position.z = 236000;
+	}
+	
+	module.exports = {
+	  receivePlanetTarget: receivePlanetTarget,
+	  resetControls: resetControls
+	}
 
 
 /***/ }

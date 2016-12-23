@@ -20,7 +20,7 @@
 		  vec4 sample = texture2D(texture, vUV);
 		  gl_FragColor = vec4(sample.xyz, sample.w);
 		}
-		</script> 
+		</script>
 
 	</head>
 	<body id="body">
@@ -43,7 +43,7 @@
 			$.each($listItems, function(index, value) {
 				$(value).on("click", event => {
 					console.log(event.currentTarget.innerText);
-					window.domInput.receivePlanetTarget(event.currentTarget.innerText);
+					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
 				});
 			});
 		</script>
