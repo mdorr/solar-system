@@ -280,7 +280,7 @@
 	  // root: The object this orbit is attached to. Should be the sun
 	  // color: The color the orbit is drawn in.
 	  addOrbit (semiMajorAxis, eccentricity, inclination, perihelion, root, color = 0x44444) {
-	
+	    // Calculate the necessary values
 	    let semiMinorAxis = MathHelper.minorAxis(semiMajorAxis, eccentricity);
 	    let ellipseCenterX =
 	      root.obj.position.x - MathHelper.auToUnits((semiMajorAxis - perihelion));
@@ -315,6 +315,7 @@
 	
 	    let material;
 	
+	    // uranus texture has an alphamap, saturns texture does not.
 	    if (alphaMap) {
 	      material = new THREE.MeshBasicMaterial({
 	        map: new THREE.TextureLoader().load(texFile),
@@ -329,7 +330,6 @@
 	        side: THREE.DoubleSide
 	      });
 	    }
-	
 	
 	    this.ring = new THREE.Mesh(
 	      ringGeometry,
