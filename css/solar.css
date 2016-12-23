@@ -1,3 +1,12 @@
+body {
+  font-family: 'Titillium Web', sans-serif;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
 .label{
   cursor:default !important;
   position:absolute;
@@ -5,5 +14,5 @@
   background:rgba(10,10,10,0.5);
   padding:5px;
   font-size:10px;
-  z-index:100;
+  z-index:50;
 }

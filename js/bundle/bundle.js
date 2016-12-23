@@ -46,7 +46,7 @@
 
 	const StellarObject = __webpack_require__ (1);
 	const MathHelper = __webpack_require__ (2);
-	const SceneManager = __webpack_require__ (6);
+	const SceneManager = __webpack_require__ (3);
 	
 	SceneManager.initScene();
 	
@@ -160,7 +160,7 @@
 	neptune.updatePosition(0);
 	
 	const pluto = new StellarObject(
-	  100000.187,
+	  1.187,
 	  "./textures/pluto/pluto_diffuse.jpg",
 	  sun.obj,
 	  "Pluto"
@@ -183,7 +183,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const MathHelper = __webpack_require__ (2);
-	const SimObject = __webpack_require__ (5);
+	const SimObject = __webpack_require__ (4);
 	
 	const ORBIT_POINTS = 100;
 	
@@ -269,13 +269,17 @@
 	      return;
 	    }
 	
+	    // The curve is defined as a set of points. Since we won't be exactly on
+	    // one of those, get the two next matchin ones
 	    let idxLower = Math.floor(newPositionOnOrbit * ORBIT_POINTS);
 	    let idxHigher = idxLower + 1;
 	
+	    // calculated the distance between those two points
 	    let lowerSectionBound = idxLower / ORBIT_POINTS;
 	    let higherSectionBound = idxHigher / ORBIT_POINTS;
-	
 	    let sectionSize = higherSectionBound - lowerSectionBound;
+	
+	    // calculate the percentage between those points, this is used in interpolation
 	    let sectionPercentage = ((newPositionOnOrbit - lowerSectionBound) / sectionSize);
 	
 	    if (idxHigher > ORBIT_POINTS) {
@@ -294,20 +298,24 @@
 	  }
 	
 	  addLabel(name) {
-	    //this.label = $('<div class="label">'+name+'></div>').appendTo('body');
 	    let div = document.createElement('div');
 	    div.innerHTML = name;
 	    div.className = "label";
 	    this.label = document.body.appendChild(div);
 	  }
 	
+	  clickLabel () {
+	    console.log("clicked " + this.name);
+	  }
+	
 	  updateLabelPosition () {
-	    if (this.label === undefined || this.name == "Sun" || this.body === undefined ) {
+	    if (this.label === undefined || this.body === undefined ) {
 	      return;
 	    }
 	
-	    // check if object is on screen
+	    // check if object is on screen; if not, deactivate the label attached
 	    if (!this.sceneManager.frustum.intersectsObject(this.body)) {
+	      this.label.style.display = "none";
 	      return;
 	    }
 	
@@ -323,13 +331,7 @@
 	    vector.x = Math.round( (   vector.x + 1 ) * canvas.width  / 2 );
 	    vector.y = Math.round( ( - vector.y + 1 ) * canvas.height / 2 );
 	
-	    if (vector.z < 0) {
-	      this.label.style.display = "none";
-	    } else {
-	      this.label.style.display = "block";
-	    }
-	
-	    vector.z = 0;
+	    this.label.style.display = "block";
 	    this.label.style.left = vector.x+"px";
 	    this.label.style.top = vector.y+"px";
 	  }
@@ -373,29 +375,7 @@
 
 
 /***/ },
-/* 3 */,
-/* 4 */,
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	const SceneManager = __webpack_require__ (6);
-	
-	class SimObject {
-	  constructor () {
-	    SceneManager.initSimObject(this);
-	    this.obj = new THREE.Object3D();
-	    this.sceneManager = SceneManager;
-	  };
-	
-	  // Update is called once per frame
-	  update (delta) { }
-	}
-	
-	module.exports = SimObject;
-
-
-/***/ },
-/* 6 */
+/* 3 */
 /***/ function(module, exports) {
 
 	// Set up references
@@ -469,6 +449,26 @@
 	  controls: controls,
 	  frustum: frustum
 	};
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const SceneManager = __webpack_require__ (3);
+	
+	class SimObject {
+	  constructor () {
+	    SceneManager.initSimObject(this);
+	    this.obj = new THREE.Object3D();
+	    this.sceneManager = SceneManager;
+	  };
+	
+	  // Update is called once per frame
+	  update (delta) { }
+	}
+	
+	module.exports = SimObject;
 
 
 /***/ }
