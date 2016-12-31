@@ -33,12 +33,37 @@ canvas {
   border: 1px solid #eee;
 }
 
-.nav_title {
+.navobjects {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0;
+  padding: 10px;
   font-size: 18px;
-  text-align: center;
   z-index:150;
-  display: inline;
+  text-shadow: 0px 0px 2px #000;
+}
+
+.navobjects:hover {
+  color: #fff;
+  transition: font-size 0.2s ease-in-out;
+}
+
+.navobjects.title {
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  text-align: center;
+}
+
+.navobjects.back {
+  left: 0;
+  width: 10%;
+  text-align: left;
+}
+
+.navobjects.info {
+  right: 0;
+  width: 10%;
+  text-align: right;
 }
