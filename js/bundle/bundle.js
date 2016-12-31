@@ -48,7 +48,7 @@
 	const SkySphere = __webpack_require__ (5);
 	const MathHelper = __webpack_require__ (2);
 	const SceneManager = __webpack_require__ (4);
-	const InputManager = __webpack_require__ (7);
+	const InputManager = __webpack_require__ (6);
 	
 	SceneManager.initScene();
 	
@@ -265,10 +265,7 @@
 	      material
 	    );
 	
-	
-	    this.obj.add(body);
-	
-	
+	    this.obj.add(body); // Body object will be added as child object to allow independent tilt/rotation from parent object (this.obj)
 	    this.body = body;
 	  }
 	
@@ -308,6 +305,7 @@
 	    root.obj.add(this.orbit)
 	  }
 	
+	  // addRing: This is used for Saturn and Uranus and will add the ring geometry
 	  addRing (innerRadius, outerRadius, texFile, alphaMap) {
 	
 	    let ringGeometry = new THREE.RingGeometry2(innerRadius, outerRadius, 180, 1, 0, Math.PI * 2);
@@ -569,7 +567,7 @@
 	    let geometry = new THREE.SphereGeometry(MathHelper.auToUnits(SKYSPHERE_SIZE_AU), 32, 32);
 	
 	    let uniforms = {
-	      texture: { type: 't', value: THREE.ImageUtils.loadTexture(tex_file) }
+	      texture: { type: 't', value: new THREE.TextureLoader().load(tex_file) }
 	    };
 	
 	    let material = new THREE.ShaderMaterial( {
@@ -581,7 +579,7 @@
 	    let skysphere = new THREE.Mesh(geometry, material);
 	
 	    skysphere.scale.set(-1, 1, 1);
-	    skysphere.eulerOrder = 'XZY';
+	    skysphere.rotation.order = 'XZY';
 	    skysphere.renderDepth = 1000.0;
 	
 	    parent.add(skysphere);
@@ -593,8 +591,7 @@
 
 
 /***/ },
-/* 6 */,
-/* 7 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const SceneManager = __webpack_require__ (4);

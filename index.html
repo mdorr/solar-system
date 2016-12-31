@@ -39,9 +39,8 @@
 
 
 		<script>
-			const $listItems = $("div");
-
-			$.each($listItems, function(index, value) {
+			const $planetLabels = $("div.label");
+			$.each($planetLabels, function(index, value) {
 				$(value).on("click", event => {
 					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
 				});
