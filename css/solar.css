@@ -1,5 +1,6 @@
 body {
   font-family: 'Titillium Web', sans-serif;
+  color:#ddd;
   overflow: hidden;
 }
 
@@ -12,7 +13,6 @@ canvas {
   cursor:default;
   position:absolute;
   line-height: 40px;
-  color:#ddd;
   font-size:10px;
   width: 40px;
   height: 40px;
@@ -26,10 +26,19 @@ canvas {
 
 }
 
-
 .label:hover{
   color: #fff;
   z-index:100;
   transition: font-size 0.2s ease-in-out;
   border: 1px solid #eee;
+}
+
+.nav_title {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 18px;
+  text-align: center;
+  z-index:150;
+  display: inline;
 }

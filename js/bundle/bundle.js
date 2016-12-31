@@ -487,10 +487,10 @@
 	const controls = new THREE.OrbitControls(camera, renderer.domElement);
 	const initScene = function () {
 	  // Set size to fullscreen
-	  renderer.setSize( window.innerWidth, window.innerHeight );
+	  renderer.setSize(window.innerWidth, window.innerHeight);
 	
 	  // append renderer to document
-	  document.body.appendChild( renderer.domElement );
+	  document.body.appendChild(renderer.domElement);
 	
 	  // Create an event listener that resizes the renderer with the browser window.
 	  window.addEventListener('resize', function() {
