@@ -105,11 +105,23 @@ canvas {
   background: #222;
   border-radius: 3px;
 
+  padding: 20px;
+
   z-index: 250;
 
   overflow: scroll;
 
   transition: all 0.2s ease-in-out;
+}
+
+.details h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.details p {
+  line-height: 1.4;
+  margin-bottom: 20px;
 }
 
 .overlay {
