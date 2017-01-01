@@ -1,7 +1,6 @@
 <html>
 	<head>
 		<title>The Solar System</title>
-
 		<script type="application/x-glsl" id="sky-vertex">
 		varying vec2 vUV;
 
@@ -11,7 +10,6 @@
 		  gl_Position = projectionMatrix * modelViewMatrix * pos;
 		}
 		</script>
-
 		<script type="application/x-glsl" id="sky-fragment">
 		uniform sampler2D texture;
 		varying vec2 vUV;
@@ -21,7 +19,6 @@
 		  gl_FragColor = vec4(sample.xyz, sample.w);
 		}
 		</script>
-
 	</head>
 	<body id="body">
 		<script src="js/jquery/jquery-3.1.1.min.js"></script>
@@ -39,7 +36,6 @@
 		<div class="navobjects info" id="info"></div>
 		<div class="navobjects about" id="about"><a href="https://github.com/mdorr/solar-system" target="_blank">About</a></div>
 		<div class="helptext" id="help">Click and drag to rotate. Click any label for details.</div>
-
 
 		<div id="overlay"></div>
 		<div id="details"></div>
@@ -67,6 +63,5 @@
 				window.inputManager.hideDetails();
 			});
 		</script>
-
 	</body>
 </html>

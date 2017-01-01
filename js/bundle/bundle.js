@@ -498,8 +498,6 @@
 	
 	  controls.target = this.rootObject.position;
 	
-	  console.log(this.rootObject);
-	
 	  // Start simulation and render loop
 	  render();
 	}

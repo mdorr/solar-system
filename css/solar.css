@@ -23,7 +23,6 @@ canvas {
   transition: font-size 0.2s ease-in-out;
   white-space: nowrap;
   overflow: hidden;
-
 }
 
 .label:hover{
