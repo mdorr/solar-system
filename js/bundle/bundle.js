@@ -770,7 +770,7 @@
 	    case "Earth":
 	      return (`
 	        <h1>The Earth</h1>
-	        <p>Earth, otherwise known as the world, (Greek: Γαῖα Gaia; Latin: Terra) is the third planet from the Sun and the only object in the Universe known to harbor life. It is the densest planet in the Solar System and the largest of the four terrestrial planets.</p>
+	        <p>Earth, otherwise known as the world, is the third planet from the Sun and the only object in the Universe known to harbor life. It is the densest planet in the Solar System and the largest of the four terrestrial planets.</p>
 	
 	        <p>According to radiometric dating and other sources of evidence, Earth formed about 4.54 billion years ago. Earth's gravity interacts with other objects in space, especially the Sun and the Moon. During one orbit around the Sun (one year), Earth rotates about its axis, creating 365.26 days. Earth's axis of rotation is tilted, producing seasonal variations on the planet's surface. Earth has only one moon. The gravitational interaction between the Earth and Moon causes ocean tides, stabilizes the Earth's orientation on its axis, and gradually slows its rotation.</p>
 	
