@@ -1,6 +1,6 @@
 body {
   font-family: 'Titillium Web', sans-serif;
-  color:#ddd;
+  color: rgba(0,0,0,0);
   overflow: hidden;
   user-select: none;
 }
@@ -11,6 +11,7 @@ canvas {
 }
 
 .label{
+  color:#ddd;
   cursor: default;
   position:absolute;
   line-height: 40px;
@@ -34,6 +35,7 @@ canvas {
 }
 
 .navobjects {
+  color:#ddd;
   position: absolute;
   cursor: default;
   padding: 10px;
@@ -78,6 +80,7 @@ canvas {
 }
 
 .helptext {
+  color:#ddd;
   position: absolute;
   cursor: default;
   bottom: 0;
@@ -94,6 +97,7 @@ canvas {
 }
 
 .details {
+  color:#ddd;
   cursor: default;
   margin: auto;
   position: absolute;
@@ -113,7 +117,7 @@ canvas {
 
   overflow: scroll;
 
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, color 0.5s linear;
 }
 
 .details h1 {
@@ -136,10 +140,11 @@ canvas {
 
   z-index: 200;
 
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .wikilink {
+  color:#ddd;
   text-decoration: underline;
   font-size: 12px;
 }
