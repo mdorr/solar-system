@@ -56,7 +56,10 @@
 	  695.7,
 	  "./textures/sun/sun_diffuse.jpg",
 	  SceneManager.scene,
-	  "Sun"
+	  "Sun",
+	  0,
+	  1000,
+	  true
 	)
 	sun.obj.position.x = 1; // Hack to prevent issue with controls; Orbitcontrols fail when position is (0,0,0)
 	
@@ -67,10 +70,11 @@
 	  "./textures/mercury/mercury_diffuse.jpg",
 	  sun.obj,
 	  "Mercury",
-	  0.01
+	  0.01,
+	  14
 	)
 	mercury.addOrbit(0.3871, 0.20563, 3.38, 0.3075, sun, 0x616569);
-	mercury.updatePosition(0);
+	mercury.updatePosition(0.7);
 	
 	SceneManager.planets.push(mercury);
 	
@@ -79,11 +83,12 @@
 	  "./textures/venus/venus_diffuse.jpg",
 	  sun.obj,
 	  "Venus",
-	  2.64
+	  2.64,
+	  37
 	)
 	
 	venus.addOrbit(0.7233, 0.0067, 3.86, 0.7184, sun, 0x8f8d77);
-	venus.updatePosition(0);
+	venus.updatePosition(0.825);
 	
 	SceneManager.planets.push(venus);
 	
@@ -93,12 +98,13 @@
 	  "./textures/earth/earth_diffuse.jpg",
 	  sun.obj,
 	  "Earth",
-	  23.93
+	  23.93,
+	  60
 	)
 	earth.obj.position.x += 1;
 	
 	earth.addOrbit(1, 0.0167, 7.16, 0.9833, sun, 0x4d65a4);
-	earth.updatePosition(0);
+	earth.updatePosition(0.73);
 	
 	SceneManager.planets.push(earth);
 	
@@ -114,10 +120,11 @@
 	  "./textures/mars/mars_diffuse.jpg",
 	  sun.obj,
 	  "Mars",
-	  25.19
+	  25.19,
+	  113
 	)
 	mars.addOrbit(1.524 , 0.0934, 5.65, 1.3814, sun, 0x79260f);
-	mars.updatePosition(0);
+	mars.updatePosition(0.9);
 	
 	SceneManager.planets.push(mars);
 	
@@ -126,10 +133,11 @@
 	  "./textures/jupiter/jupiter_diffuse.jpg",
 	  sun.obj,
 	  "Jupiter",
-	  3.12
+	  3.12,
+	  712
 	)
 	jupiter.addOrbit(5.2026, 0.048498, 6.09, 4.95029, sun, 0xd4b48d);
-	jupiter.updatePosition(0);
+	jupiter.updatePosition(0.45);
 	
 	SceneManager.planets.push(jupiter);
 	
@@ -138,7 +146,8 @@
 	  "./textures/saturn/saturn_diffuse.jpg",
 	  sun.obj,
 	  "Saturn",
-	  26.73
+	  26.73,
+	  1769
 	)
 	
 	saturn.addRing(
@@ -149,7 +158,7 @@
 	
 	saturn.ring.rotation.x = -45;
 	saturn.addOrbit(9.5549, 0.05555, 5.51, 9.024, sun, 0xceaf58);
-	saturn.updatePosition(0);
+	saturn.updatePosition(0.275);
 	
 	SceneManager.planets.push(saturn);
 	
@@ -158,7 +167,8 @@
 	  "./textures/uranus/uranus_diffuse.jpg",
 	  sun.obj,
 	  "Uranus",
-	  82.23
+	  82.23,
+	  5045
 	)
 	
 	uranus.addRing(
@@ -170,7 +180,7 @@
 	
 	uranus.ring.rotation.x = -45;
 	uranus.addOrbit(19.2184, 0.04638, 6.48, 18.33, sun, 0xc2edee);
-	uranus.updatePosition(0);
+	uranus.updatePosition(0.85);
 	SceneManager.planets.push(uranus);
 	
 	const neptune = new StellarObject(
@@ -178,11 +188,12 @@
 	  "./textures/neptune/neptune_diffuse.jpg",
 	  sun.obj,
 	  "Neptune",
-	  28.33
+	  28.33,
+	  9893
 	)
 	
 	neptune.addOrbit(30.1104, 0.0094, 6.34, 29.81, sun, 0x3448ff);
-	neptune.updatePosition(0);
+	neptune.updatePosition(0.12);
 	SceneManager.planets.push(neptune);
 	
 	const pluto = new StellarObject(
@@ -190,10 +201,11 @@
 	  "./textures/pluto/pluto_diffuse.jpg",
 	  sun.obj,
 	  "Pluto",
-	  60.41
+	  60.41,
+	  14887
 	)
 	pluto.addOrbit(39.48, 0.2488, 17.16, 29.659, sun, 0xc29a6d);
-	pluto.updatePosition(0);
+	pluto.updatePosition(0.2);
 	SceneManager.planets.push(pluto);
 	
 	const skysphere = new SkySphere(
@@ -227,26 +239,34 @@
 	let hideLabel = false;
 	
 	class StellarObject extends SimObject {
-	  constructor (size, tex_file, parent, name, axialTilt) {
+	  constructor (size, tex_file, parent, name, axialTilt, orbitTime = 60, unlit = false) {
 	    super();
 	    this.size = size;
 	    this.obj = new THREE.Object3D();
 	    this.orbit = null;
 	    this.orbitCurve = null;
 	    this.ring = null;
-	    this.positionOnOrbit = 0;
 	    this.label = undefined;
 	    this.name = name;
 	    parent.add(this.obj);
-	    this.addBody(size, tex_file, axialTilt);
+	    this.addBody(size, tex_file, axialTilt, unlit);
 	    this.addLabel(this.name);
+	    this.positionOnOrbit = 0;
+	    this.movementRate = 1 / orbitTime
 	  }
 	
-	  addBody (size, tex_file, axialTilt) {
+	  addBody (size, tex_file, axialTilt, unlit) {
 	    let geometry = new THREE.SphereGeometry(size, 64, 64);
-	    let material = new THREE.MeshLambertMaterial({
-	      map: new THREE.TextureLoader().load(tex_file)
-	    });
+	    let material;
+	    if (unlit) {
+	      material = new THREE.MeshBasicMaterial({
+	        map: new THREE.TextureLoader().load(tex_file)
+	      });
+	    } else {
+	      material = new THREE.MeshLambertMaterial({
+	        map: new THREE.TextureLoader().load(tex_file)
+	      });
+	    }
 	
 	    if (axialTilt) {
 	      geometry.rotateX(MathHelper.degToRad(axialTilt));
@@ -353,12 +373,16 @@
 	    let pos1 = this.geometry.vertices[idxLower];
 	    let pos2 = this.geometry.vertices[idxHigher];
 	
-	    let v1 = new THREE.Vector3(pos1.x, pos1.y, pos1.z);
-	    v1.lerp(pos2, sectionPercentage);
+	    if (pos1 && pos2) {
+	      let v1 = new THREE.Vector3(pos1.x, pos1.y, pos1.z);
+	      v1.lerp(pos2, sectionPercentage);
 	
-	    this.obj.position.x = v1.x;
-	    this.obj.position.y = v1.y;
-	    this.obj.position.z = v1.z;
+	      this.obj.position.x = v1.x;
+	      this.obj.position.y = v1.y;
+	      this.obj.position.z = v1.z;
+	
+	      this.positionOnOrbit = newPositionOnOrbit;
+	    }
 	  }
 	
 	  toggleOrbit(newState) {
@@ -403,9 +427,12 @@
 	  }
 	
 	  update(delta) {
-	//    this.positionOnOrbit = ((this.positionOnOrbit + delta * 10) % 1);
-	//    this.updatePosition(this.positionOnOrbit);
 	    this.updateLabel();
+	    this.body.rotateY(delta);
+	    if (this.sceneManager.movePlanets) {
+	      let positionDelta = delta * this.movementRate;
+	      this.updatePosition((this.positionOnOrbit + positionDelta) % 1);
+	    }
 	  }
 	}
 	
@@ -448,9 +475,9 @@
 	
 	class SimObject {
 	  constructor () {
-	    SceneManager.initSimObject(this);
 	    this.obj = new THREE.Object3D();
 	    this.sceneManager = SceneManager;
+	    SceneManager.initSimObject(this);
 	  };
 	
 	  // Update is called once per frame
@@ -475,6 +502,7 @@
 	let planets = [];
 	let simObjects = [];
 	let rootObject = null;
+	let movePlanets = true;
 	
 	const controls = new THREE.OrbitControls(camera, renderer.domElement);
 	const initScene = function () {
@@ -503,7 +531,6 @@
 	}
 	
 	const render = function () {
-	  time = clock.getElapsedTime();
 	  delta = clock.getDelta();
 	  requestAnimationFrame(render);
 	
@@ -537,7 +564,8 @@
 	  controls: controls,
 	  frustum: frustum,
 	  planets: planets,
-	  rootObject: rootObject
+	  rootObject: rootObject,
+	  movePlanets: movePlanets
 	};
 
 
@@ -620,6 +648,8 @@
 	  SceneManager.camera.position.set(newCamPos.x + distance, newCamPos.y + distance, newCamPos.z + distance);
 	
 	  SceneManager.controls.target = targetedObject.obj.position;
+	
+	  SceneManager.movePlanets = false; //Prevent jittery animation when moving planets while zoomed in
 	}
 	
 	const updateButtons = function (target) {
@@ -677,6 +707,8 @@
 	  SceneManager.controls.target = SceneManager.rootObject.position;
 	  SceneManager.controls.minDistance = 50;
 	  SceneManager.controls.maxDistance = MathHelper.auToUnits(50);
+	
+	  SceneManager.movePlanets = true;
 	
 	  // Default camera settings
 	  SceneManager.camera.position.x = -309000;

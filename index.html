@@ -34,7 +34,7 @@
 		<div class="navobjects back" id="back"></div>
 		<div class="navobjects title" id="title">The Solar System</div>
 		<div class="navobjects info" id="info"></div>
-		<div class="navobjects about" id="about"><a href="https://github.com/mdorr/solar-system" target="_blank">About</a></div>
+		<div class="navobjects about" id="about"><a href="https://github.com/mdorr/solar-system" target="_blank">Github project page</a></div>
 		<div class="helptext" id="help">Click and drag to rotate. Click any label for details.</div>
 
 		<div id="overlay"></div>
@@ -61,6 +61,17 @@
 			const $overlay = $("#overlay");
 			$overlay.on("click", event => {
 				window.inputManager.hideDetails();
+			});
+
+			const $details = $("#details");
+			$details.on("click", event => {
+				window.inputManager.hideDetails();
+			});
+
+			$(document).keyup(function(e) {
+  			if (e.keyCode === 27) { // esc key
+					window.inputManager.hideDetails();
+				}
 			});
 		</script>
 	</body>

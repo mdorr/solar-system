@@ -2,6 +2,7 @@ body {
   font-family: 'Titillium Web', sans-serif;
   color:#ddd;
   overflow: hidden;
+  user-select: none;
 }
 
 canvas {
@@ -10,7 +11,7 @@ canvas {
 }
 
 .label{
-  cursor:default;
+  cursor: default;
   position:absolute;
   line-height: 40px;
   font-size:10px;
@@ -93,6 +94,7 @@ canvas {
 }
 
 .details {
+  cursor: default;
   margin: auto;
   position: absolute;
   top: 0;
