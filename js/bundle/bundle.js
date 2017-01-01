@@ -208,19 +208,11 @@
 	let ambientLight = new THREE.AmbientLight(0x2f2a1b);
 	SceneManager.scene.add(ambientLight);
 	
-	
-	SceneManager.controls.target = sun.obj.position;
-	SceneManager.controls.minDistance = 50;
-	
-	SceneManager.controls.maxDistance = MathHelper.auToUnits(50);
 	window.earth = earth;
 	window.sceneManager = SceneManager;
-	
 	window.inputManager = InputManager;
 	
-	SceneManager.camera.position.x = -309000;
-	SceneManager.camera.position.y = 441000;
-	SceneManager.camera.position.z = 236000;
+	InputManager.resetControls();
 
 
 /***/ },
@@ -290,16 +282,16 @@
 	    	0                 // aRotation
 	    );
 	
-	    var path = new THREE.Path( curve.getPoints(ORBIT_POINTS) );
+	    var path = new THREE.Path(curve.getPoints(ORBIT_POINTS));
 	
 	    var geometry = path.createPointsGeometry(ORBIT_POINTS);
-	    var material = new THREE.LineBasicMaterial( { color : color } );
+	    var material = new THREE.LineBasicMaterial({ color : color });
 	
 	    // Rotate orbit by 90 deg to have it sit on the correct plane, then apply inclination
 	    geometry.rotateX(MathHelper.degToRad(90 + inclination));
 	
 	    // Create the final object to add to the scene
-	    this.orbit = new THREE.Line( geometry, material );
+	    this.orbit = new THREE.Line(geometry, material);
 	
 	    this.geometry = geometry;
 	    root.obj.add(this.orbit)
@@ -396,14 +388,14 @@
 	    var vector = new THREE.Vector3();
 	    var canvas = this.sceneManager.renderer.domElement;
 	
-	    vector.set( this.obj.position.x, this.obj.position.y, this.obj.position.z );
+	    vector.set(this.obj.position.x, this.obj.position.y, this.obj.position.z);
 	
 	    // map to normalized device coordinate (NDC) space
 	    vector.project(this.sceneManager.camera);
 	
 	    // map to 2D screen space
-	    vector.x = Math.round( (   vector.x + 1 ) * canvas.width  / 2 );
-	    vector.y = Math.round( ( - vector.y + 1 ) * canvas.height / 2 );
+	    vector.x = Math.round((vector.x + 1) * canvas.width  / 2);
+	    vector.y = Math.round((-vector.y + 1) * canvas.height / 2);
 	
 	    this.label.style.display = "block";
 	    this.label.style.left = (vector.x-21)+"px";
@@ -501,10 +493,12 @@
 	    camera.updateProjectionMatrix();
 	  });
 	
-	  rootObject = new THREE.Object3D();
-	  rootObject.position.x = 1;
+	  this.rootObject = new THREE.Object3D();
+	  this.rootObject.position.x = 1;
 	
-	  controls.target = rootObject.position;
+	  controls.target = this.rootObject.position;
+	
+	  console.log(this.rootObject);
 	
 	  // Start simulation and render loop
 	  render();
@@ -520,7 +514,6 @@
 	  camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 	  cameraViewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
 	  frustum.setFromMatrix(cameraViewProjectionMatrix);
-	
 	
 	  // Update all active simulation objects with the current delta
 	  simObjects.forEach(obj => {
@@ -563,7 +556,6 @@
 	  constructor (tex_file, parent) {
 	    super();
 	
-	
 	    let geometry = new THREE.SphereGeometry(MathHelper.auToUnits(SKYSPHERE_SIZE_AU), 32, 32);
 	
 	    let uniforms = {
@@ -584,7 +576,6 @@
 	
 	    parent.add(skysphere);
 	  }
-	
 	}
 	
 	module.exports = SkySphere;
@@ -615,13 +606,13 @@
 	  }
 	
 	  resetControls();
+	  updateButtons(target);
 	  targetedObject = target;
 	
 	  target.hideLabel = true;
 	  target.toggleOrbit(false);
 	
 	  let newCamPos = targetedObject.obj.position.clone();
-	  let tgtSize = targetedObject.size;
 	
 	  let distance = Math.max(20, target.size * 1.5);
 	  SceneManager.controls.minDistance = distance;
@@ -632,6 +623,48 @@
 	  SceneManager.controls.target = targetedObject.obj.position;
 	}
 	
+	const updateButtons = function (target) {
+	  let backbutton = document.getElementById('back');
+	  let infolink = document.getElementById('info');
+	  let title = document.getElementById('title');
+	  let helptext = document.getElementById('help');
+	
+	  if (backbutton && infolink && title && helptext) {
+	    if (target) {
+	      backbutton.innerHTML = "Back";
+	      infolink.innerHTML = "Info";
+	      title.innerHTML = target.name;
+	      helptext.innerHTML = "";
+	    } else {
+	      backbutton.innerHTML = "";
+	      infolink.innerHTML = "";
+	      title.innerHTML = "The Solar System";
+	      helptext.innerHTML = "Click and drag to rotate. Click any label for details.";
+	    }
+	  }
+	}
+	
+	const showDetails = function () {
+	  let overlay = document.getElementById('overlay');
+	  let details = document.getElementById('details');
+	
+	  if (overlay && details) {
+	    if (targetedObject) {
+	      overlay.className = "overlay";
+	      details.className = "details";
+	    }
+	  }
+	}
+	
+	const hideDetails = function () {
+	  let overlay = document.getElementById('overlay');
+	  let details = document.getElementById('details');
+	
+	  if (overlay && details) {
+	    overlay.className = "";
+	    details.className = "";
+	  }
+	}
 	
 	const resetControls = function () {
 	  if (targetedObject) {
@@ -639,11 +672,12 @@
 	    targetedObject.toggleOrbit(true);
 	  }
 	  targetedObject = null;
-	
-	  SceneManager.controls.target = SceneManager.rootObject;
+	  updateButtons();
+	  SceneManager.controls.target = SceneManager.rootObject.position;
 	  SceneManager.controls.minDistance = 50;
 	  SceneManager.controls.maxDistance = MathHelper.auToUnits(50);
 	
+	  // Default camera settings
 	  SceneManager.camera.position.x = -309000;
 	  SceneManager.camera.position.y = 441000;
 	  SceneManager.camera.position.z = 236000;
@@ -651,7 +685,9 @@
 	
 	module.exports = {
 	  receivePlanetTarget: receivePlanetTarget,
-	  resetControls: resetControls
+	  resetControls: resetControls,
+	  showDetails: showDetails,
+	  hideDetails: hideDetails
 	}
 
 

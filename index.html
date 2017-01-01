@@ -34,9 +34,15 @@
 		<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
 		<link rel="stylesheet" href="css/solar.css">
 
-		<div class="navobjects back">Back</div>
-		<div class="navobjects title">Currently viewing: Solar System</div>
-		<div class="navobjects info">Info</div>
+		<div class="navobjects back" id="back"></div>
+		<div class="navobjects title" id="title">The Solar System</div>
+		<div class="navobjects info" id="info"></div>
+		<div class="navobjects about" id="about"><a href="https://github.com/mdorr/solar-system" target="_blank">About</a></div>
+		<div class="helptext" id="help">Click and drag to rotate. Click any label for details.</div>
+
+
+		<div id="overlay"></div>
+		<div id="details"></div>
 
 		<script>
 			const $planetLabels = $("div.label");
@@ -44,6 +50,21 @@
 				$(value).on("click", event => {
 					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
 				});
+			});
+
+			const $backButton = $("#back");
+			$backButton.on("click", event => {
+				window.inputManager.resetControls();
+			});
+
+			const $infoButton = $("#info");
+			$infoButton.on("click", event => {
+				window.inputManager.showDetails();
+			});
+
+			const $overlay = $("#overlay");
+			$overlay.on("click", event => {
+				window.inputManager.hideDetails();
 			});
 		</script>
 
