@@ -136,3 +136,8 @@ canvas {
 
   transition: all 0.2s ease-in-out;
 }
+
+.wikilink {
+  text-decoration: underline;
+  font-size: 12px;
+}
