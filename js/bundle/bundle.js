@@ -268,16 +268,17 @@
 	      });
 	    }
 	
-	    if (axialTilt) {
-	      geometry.rotateX(MathHelper.degToRad(axialTilt));
-	    }
-	
 	    let body = new THREE.Mesh(
 	      geometry,
 	      material
 	    );
 	
 	    this.obj.add(body); // Body object will be added as child object to allow independent tilt/rotation from parent object (this.obj)
+	
+	    if (axialTilt) {
+	      body.rotateX(MathHelper.degToRad(axialTilt));
+	    }
+	
 	    this.body = body;
 	  }
 	
