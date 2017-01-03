@@ -159,3 +159,51 @@ canvas {
   text-decoration: underline;
   font-size: 12px;
 }
+
+.navigation {
+  color:#ddd;
+  position: absolute;
+  cursor: default;
+  font-size: 24px;
+  z-index:150;
+  text-shadow: 0px 0px 2px #000;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  text-align: center;
+}
+
+.navigation ul {
+  margin-bottom: 10px;
+}
+
+.navigation li {
+  display: inline-block;
+  padding: 5px 15px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+
+.navigation li:hover {
+  color: #6cf;
+  border: 1px solid #6cf;
+  transition: all 0.2s ease-in-out;
+}
+
+.navigation li.arrow {
+  border: none;
+}
+
+.navigation ul.breadcrumbs {
+  font-size: 18px;
+}
+
+.navigation ul.subnav {
+  font-size: 14px;
+}

@@ -394,7 +394,7 @@
 	
 	  addLabel(name) {
 	    let div = document.createElement('div');
-	    div.innerHTML = name;
+	    //div.innerHTML = name;
 	    div.className = "label";
 	    this.label = document.body.appendChild(div);
 	  }
