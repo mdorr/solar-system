@@ -31,16 +31,24 @@
 		<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
 		<link rel="stylesheet" href="css/solar.css">
 
-		<div class="navobjects back" id="back"></div>
+
+		// TODO: Change layout:
+		//
+		//       <=   Title   info
+		//           helptext
+		//
+		//
+		//         copyright
+
+		<div class="navobjects back link" id="back"></div>
 		<div class="navobjects title" id="title">The Solar System</div>
-		<div class="navobjects info" id="info"></div>
-		<div class="navobjects about" id="about"><a href="https://github.com/mdorr/solar-system" target="_blank">Github project page</a></div>
-		<div class="navobjects author" id="author">
-			Created by Maurice Spiewack<br />
-			<a href="http://www.spiewack.com" target="_blank">Portfolio</a><br />
-			<a href="https://www.linkedin.com/in/mspiew" target="_blank">Linkedin</a>
+		<div class="navobjects info link" id="info"></div>
+		<div class="navobjects title help" id="help">Click and drag to rotate. Mousewheel to zoom. Click any label for details.</div>
+
+		<div class="navobjects about link" id="about"></div>
+		<div class="author" id="author">
+			By Maurice Spiewack • <a href="https://github.com/mdorr/solar-system" target="_blank">Github</a> • <a href="http://www.spiewack.com" target="_blank">Portfolio</a> • <a href="https://www.linkedin.com/in/mspiew" target="_blank">Linkedin</a>
 		</div>
-		<div class="helptext" id="help">Click and drag to rotate. Click any label for details.</div>
 
 		<div id="overlay"></div>
 		<div id="details"></div>

@@ -44,9 +44,10 @@ canvas {
   text-shadow: 0px 0px 2px #000;
 }
 
-.navobjects:hover {
+.navobjects a:hover,
+.navobjects.link:hover {
   color: #fff;
-  transition: font-size 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .navobjects.title {
@@ -57,6 +58,11 @@ canvas {
   margin-right: auto;
   width: 70%;
   text-align: center;
+}
+
+.navobjects.help {
+  top: 30px;
+  font-size: 16px;
 }
 
 .navobjects.back {
@@ -79,28 +85,26 @@ canvas {
   text-align: right;
 }
 
-.navobjects.author {
-  bottom: 0;
-  left: 0;
-  text-align: left;
-}
-
-
-.helptext {
+.author {
   color:#ddd;
   position: absolute;
   cursor: default;
   bottom: 0;
   padding: 10px;
-  font-size: 18px;
+  font-size: 16px;
   z-index:150;
   text-shadow: 0px 0px 2px #000;
   left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  width: 80%;
+  width: 100%;
   text-align: center;
+}
+
+.author a:hover {
+  color: #fff;
+  transition: all 0.2s ease-in-out;
 }
 
 .details {
