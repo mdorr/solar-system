@@ -73,48 +73,48 @@
 		<div id="details"></div>
 
 		<script>
-			const $navlinks = $("li.navtarget");
-			$.each($navlinks, function (index, value) {
-				$(value).on("click", event => {
-					window.inputManager.receiveTargetName(event.currentTarget.innerText);
-				});
-			});
-
-			const $planetLabels = $("div.label");
-			$.each($planetLabels, function(index, value) {
-				$(value).on("click", event => {
-					window.inputManager.receiveTargetName(event.currentTarget.innerText);
-				});
-			});
-
-			const $backButton = $("#back");
-			$backButton.on("click", event => {
-				window.inputManager.resetControls();
-			});
-
-			const $infoButton = $("#info");
-			$infoButton.on("click", event => {
-				window.inputManager.showDetails();
-			});
-
-			const $overlay = $("#overlay");
-			$overlay.on("click", event => {
-				window.inputManager.hideDetails();
-			});
-
-			const $details = $("#details");
-			$details.on("click", event => {
-				window.inputManager.hideDetails();
-			});
-
-			$(document).keyup(function(e) {
-  			if (e.keyCode === 27) { // esc key
-					window.inputManager.hideDetails();
-				}
-			});
-
 			$(document).ready(function() {
 				window.setupScene();
+
+				const $navlinks = $("li.navtarget");
+				$.each($navlinks, function (index, value) {
+					$(value).on("click", event => {
+						window.inputManager.receiveTargetName(event.currentTarget.innerText);
+					});
+				});
+
+				const $planetLabels = $("div.label");
+				$.each($planetLabels, function(index, value) {
+					$(value).on("click", event => {
+						window.inputManager.receiveTargetName(event.currentTarget.innerText);
+					});
+				});
+
+				const $backButton = $("#back");
+				$backButton.on("click", event => {
+					window.inputManager.resetControls();
+				});
+
+				const $infoButton = $("#info");
+				$infoButton.on("click", event => {
+					window.inputManager.showDetails();
+				});
+
+				const $overlay = $("#overlay");
+				$overlay.on("click", event => {
+					window.inputManager.hideDetails();
+				});
+
+				const $details = $("#details");
+				$details.on("click", event => {
+					window.inputManager.hideDetails();
+				});
+
+				$(document).keyup(function(e) {
+					if (e.keyCode === 27) { // esc key
+						window.inputManager.hideDetails();
+					}
+				});
 			});
 		</script>
 	</body>
