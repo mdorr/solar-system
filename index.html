@@ -21,15 +21,17 @@
 		</script>
 	</head>
 	<body id="body">
+		<link rel="stylesheet" href="css/reset.css">
+		<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+		<link rel="stylesheet" href="css/solar.css">
+
+		<div class="loader" id="loader"><div class="spinner"></div></div>
+
 		<script src="js/jquery/jquery-3.1.1.min.js"></script>
 		<script src="js/three/three.js"></script>
 		<script src="js/three/RingGeometry2.js"></script>
     <script src="js/three/OrbitControls.js"></script>
 		<script src="js/bundle/bundle.js"></script>
-
-		<link rel="stylesheet" href="css/reset.css">
-		<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
-		<link rel="stylesheet" href="css/solar.css">
 
 
 
@@ -54,19 +56,11 @@
 			</ul>
 		</nav>
 
+
+
 		<div class="infobtn" id="info">Details</div>
 
 		<div class="title" id="title"></div>
-
-
-
-<!--
-		<div class="navobjects back link" id="back"></div>
-		<div class="navobjects title" id="title">The Solar System</div>
-		<div class="navobjects info link" id="info"></div>
-		<div class="navobjects title help" id="help">Click and drag to rotate. Mousewheel to zoom. Click any label for details.</div>
-
--->
 
 		<div class="author" id="author">
 			Click and drag to rotate. Mousewheel to zoom. Click any label for details.<br /><br />
@@ -82,15 +76,14 @@
 			const $navlinks = $("li.navtarget");
 			$.each($navlinks, function (index, value) {
 				$(value).on("click", event => {
-					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
+					window.inputManager.receiveTargetName(event.currentTarget.innerText);
 				});
 			});
-
 
 			const $planetLabels = $("div.label");
 			$.each($planetLabels, function(index, value) {
 				$(value).on("click", event => {
-					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
+					window.inputManager.receiveTargetName(event.currentTarget.innerText);
 				});
 			});
 
@@ -118,6 +111,10 @@
   			if (e.keyCode === 27) { // esc key
 					window.inputManager.hideDetails();
 				}
+			});
+
+			$(document).ready(function() {
+				window.setupScene();
 			});
 		</script>
 	</body>
