@@ -436,7 +436,7 @@
 	
 	  update(delta) {
 	    this.updateLabel();
-	    this.body.rotateY(delta);
+	    this.body.rotateY(delta * 0.15);
 	    if (this.sceneManager.movePlanets) {
 	      let positionDelta = delta * this.movementRate;
 	      this.updatePosition((this.positionOnOrbit + positionDelta) % 1);
@@ -639,20 +639,29 @@
 	  targetArea(targetName);
 	}
 	
+	const unselectCurrentTarget = function () {
+	  if (targetedObject) {
+	    targetedObject.hideLabel = false;
+	    targetedObject.toggleOrbit (true);
+	    targetedObject = "";
+	    targetName = "";
+	  }
+	}
+	
 	const targetArea = function (tName) {
 	  switch (tName) {
 	    case "The Solar System":
 	    case "The Outer Planets":
-	      targetedObject = null;
+	      unselectCurrentTarget();
 	      targetName = tName;
 	      resetControls();
 	      updateButtons(targetName);
 	    break;
 	    case "The Inner Planets":
-	      targetedObject = null;
+	      unselectCurrentTarget();
 	      targetName = tName;
 	      resetControls();
-	      SceneManager.camera.position.set(373283, 260569, -111892);
+	      SceneManager.camera.position.set(150375, 434724, 241257);
 	      updateButtons(targetName);
 	    break;
 	  }
@@ -662,6 +671,7 @@
 	  if (target === targetedObject) {
 	    return;
 	  }
+	  unselectCurrentTarget();
 	
 	  resetControls();
 	
