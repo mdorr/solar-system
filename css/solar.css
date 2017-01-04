@@ -34,49 +34,8 @@ canvas {
   transition: color 0.2s ease-in-out;
 }
 
-.navobjects {
-  color:#ddd;
-  position: absolute;
-  cursor: default;
-  padding: 10px;
-  font-size: 24px;
-  z-index:150;
-  text-shadow: 0px 0px 2px #000;
-}
-
-.navobjects a:hover,
-.navobjects.link:hover {
-  color: #fff;
-  transition: all 0.2s ease-in-out;
-}
-
-.navobjects.help {
-  top: 30px;
-  font-size: 16px;
-}
-
-.navobjects.back {
-  left: 0;
-  top: 0;
-  width: 15%;
-  text-align: left;
-}
-
-.navobjects.info {
-  right: 0;
-  top: 0;
-  width: 15%;
-  text-align: right;
-}
-
-.navobjects.about {
-  bottom: 0;
-  right: 0;
-  text-align: right;
-}
-
 .author {
-  color:#bbb;
+  color:#999;
   position: absolute;
   cursor: default;
   bottom: 0;
@@ -116,8 +75,6 @@ canvas {
 
   z-index: 250;
 
-  overflow: scroll;
-
   transition: background-color 0.2s ease-in-out, color 0.5s linear;
 }
 
@@ -145,7 +102,6 @@ canvas {
 }
 
 .wikilink {
-  color:#ddd;
   text-decoration: underline;
   font-size: 12px;
 }
@@ -160,6 +116,7 @@ nav {
 
   font-size: 16px;
   padding: 8px;
+  z-index: 50;
 }
 
 nav span {
@@ -173,15 +130,38 @@ nav ul {
 
 nav:hover > ul {
   display: block;
+
+
 }
 
 nav li {
   cursor: pointer;
   font-size: 16px;
   padding: 8px;
+
+  z-index: 50;
 }
 
 nav li:hover {
+  background-color: rgba(179, 179, 179, 0.4);
+}
+
+.infobtn {
+  color: #ddd;
+  background-color: rgba(0, 0, 0, 0.8);
+
+  position: absolute;
+  top: 52px;
+  left: 10px;
+
+  font-size: 16px;
+  padding: 8px;
+  margin: 8px;
+
+  z-index: 20;
+}
+
+.infobtn:hover {
   background-color: rgba(179, 179, 179, 0.4);
 }
 
@@ -202,49 +182,4 @@ nav li:hover {
   font-size: 32px;
 
   cursor: default;
-}
-
-
-.navigation {
-  color:#ddd;
-  position: absolute;
-  cursor: default;
-  font-size: 24px;
-  z-index:150;
-  text-shadow: 0px 0px 2px #000;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  width: 70%;
-  text-align: center;
-}
-
-.navigation ul {
-  margin-bottom: 10px;
-}
-
-.navigation li {
-  display: inline-block;
-  padding: 5px 15px;
-  margin-left: 10px;
-  margin-right: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-}
-
-
-.navigation li:hover {
-  color: #6cf;
-  border: 1px solid #6cf;
-  transition: all 0.2s ease-in-out;
-}
-
-.navigation li.arrow {
-  border: none;
-}
-
-.navigation ul.breadcrumbs {
-  font-size: 18px;
 }

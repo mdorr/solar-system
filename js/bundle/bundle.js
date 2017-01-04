@@ -56,7 +56,7 @@
 	  695.7,
 	  "./textures/sun/sun_diffuse.jpg",
 	  SceneManager.scene,
-	  "Sun",
+	  "The Sun",
 	  0,
 	  1000,
 	  true
