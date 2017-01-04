@@ -3,6 +3,7 @@ body {
   color: rgba(0,0,0,0);
   overflow: hidden;
   user-select: none;
+  text-rendering: optimizeLegibility;
 }
 
 canvas {
@@ -11,7 +12,7 @@ canvas {
 }
 
 .label{
-  color:#ddd;
+  color:#bbb;
   cursor: default;
   position:absolute;
   line-height: 40px;
@@ -19,10 +20,10 @@ canvas {
   width: 40px;
   height: 40px;
   text-align: center;
-  border: 1px solid #ccc;
+  border: 1px solid #aaa;
   border-radius: 50%;
   z-index:50;
-  transition: font-size 0.2s ease-in-out;
+  transition: color 0.2s ease-in-out;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -30,8 +31,7 @@ canvas {
 .label:hover{
   color: #fff;
   z-index:100;
-  transition: font-size 0.2s ease-in-out;
-  border: 1px solid #eee;
+  transition: color 0.2s ease-in-out;
 }
 
 .navobjects {
@@ -48,16 +48,6 @@ canvas {
 .navobjects.link:hover {
   color: #fff;
   transition: all 0.2s ease-in-out;
-}
-
-.navobjects.title {
-  left: 0;
-  right: 0;
-  top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  width: 70%;
-  text-align: center;
 }
 
 .navobjects.help {
@@ -86,7 +76,7 @@ canvas {
 }
 
 .author {
-  color:#ddd;
+  color:#bbb;
   position: absolute;
   cursor: default;
   bottom: 0;
@@ -160,6 +150,61 @@ canvas {
   font-size: 12px;
 }
 
+nav {
+  color: #ddd;
+  background-color: rgba(0, 0, 0, 0.8);
+
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  font-size: 16px;
+  padding: 8px;
+}
+
+nav span {
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+nav ul {
+  display: none;
+}
+
+nav:hover > ul {
+  display: block;
+}
+
+nav li {
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px;
+}
+
+nav li:hover {
+  background-color: rgba(179, 179, 179, 0.4);
+}
+
+.title {
+  color:#ddd;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  text-align: center;
+
+
+  padding: 12px;
+  font-size: 32px;
+
+  cursor: default;
+}
+
+
 .navigation {
   color:#ddd;
   position: absolute;
@@ -202,8 +247,4 @@ canvas {
 
 .navigation ul.breadcrumbs {
   font-size: 18px;
-}
-
-.navigation ul.subnav {
-  font-size: 14px;
 }

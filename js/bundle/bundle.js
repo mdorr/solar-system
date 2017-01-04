@@ -394,7 +394,7 @@
 	
 	  addLabel(name) {
 	    let div = document.createElement('div');
-	    //div.innerHTML = name;
+	    div.innerHTML = name;
 	    div.className = "label";
 	    this.label = document.body.appendChild(div);
 	  }
@@ -654,22 +654,21 @@
 	}
 	
 	const updateButtons = function (target) {
-	  let backbutton = document.getElementById('back');
-	  let infolink = document.getElementById('info');
+	//  let infolink = document.getElementById('info');
 	  let title = document.getElementById('title');
-	  let helptext = document.getElementById('help');
+	//  let helptext = document.getElementById('help');
 	
-	  if (backbutton && infolink && title && helptext) {
+	  if (/*backbutton && infolink && */title/* && helptext*/) {
 	    if (target) {
-	      backbutton.innerHTML = "Back";
-	      infolink.innerHTML = "Info";
+	      //backbutton.innerHTML = "Back";
+	      //infolink.innerHTML = "Info";
 	      title.innerHTML = target.name;
-	      helptext.innerHTML = "";
+	      //helptext.innerHTML = "";
 	    } else {
-	      backbutton.innerHTML = "";
-	      infolink.innerHTML = "";
+	      //backbutton.innerHTML = "";
+	      //infolink.innerHTML = "";
 	      title.innerHTML = "The Solar System";
-	      helptext.innerHTML = "Click and drag to rotate. Click any label for details.";
+	      //helptext.innerHTML = "Click and drag to rotate. Click any label for details.";
 	    }
 	  }
 	}

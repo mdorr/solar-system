@@ -32,6 +32,30 @@
 		<link rel="stylesheet" href="css/solar.css">
 
 
+		<nav>
+			<span>
+				Navigation ▼
+			</span>
+			<ul>
+				<li class="navtarget">The Solar System</li>
+				<li class="navtarget">The Inner Planets</li>
+				<li class="navtarget">The Outer Planets</li>
+				<li class="navtarget">Sun</li>
+				<li class="navtarget">Mercury</li>
+				<li class="navtarget">Venus</li>
+				<li class="navtarget">Earth</li>
+				<li class="navtarget">Mars</li>
+				<li class="navtarget">Jupiter</li>
+				<li class="navtarget">Saturn</li>
+				<li class="navtarget">Uranus</li>
+				<li class="navtarget">Neptune</li>
+				<li class="navtarget">Pluto</li>
+			</ul>
+		</nav>
+
+		<div class="title" id="title"></div>
+
+<!--
 		<div class="navigation">
 			<ul class="breadcrumbs">
 				<li>Solar System</li>
@@ -44,7 +68,7 @@
 				<li>Earth</li>
 				<li>Mars</li>
 			</ul>
-		</div>
+		</div> -->
 
 <!--
 		<div class="navobjects back link" id="back"></div>
@@ -62,6 +86,14 @@
 		<div id="details"></div>
 
 		<script>
+			const $navlinks = $("li.navtarget");
+			$.each($navlinks, function (index, value) {
+				$(value).on("click", event => {
+					window.inputManager.receivePlanetTarget(event.currentTarget.innerText);
+				});
+			});
+
+
 			const $planetLabels = $("div.label");
 			$.each($planetLabels, function(index, value) {
 				$(value).on("click", event => {
