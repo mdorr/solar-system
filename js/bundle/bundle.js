@@ -243,7 +243,7 @@
 	
 	const ORBIT_POINTS = 500;
 	
-	let hideLabel = false;
+	let showLabel = true;
 	
 	class StellarObject extends SimObject {
 	  constructor (size, tex_file, parent, name, axialTilt, orbitTime = 60, unlit = false) {
@@ -393,10 +393,11 @@
 	    }
 	  }
 	
-	  toggleOrbit(newState) {
+	  toggleVisibility (newState) {
 	    if (this.orbit) {
 	      this.orbit.visible = newState;
 	    }
+	    this.showLabel = newState;
 	  }
 	
 	  addLabel(name) {
@@ -412,7 +413,7 @@
 	    }
 	
 	    // check if object is on screen; if not, deactivate the label attached
-	    if (this.hideLabel || !this.sceneManager.frustum.intersectsObject(this.body)) {
+	    if (!this.showLabel || !this.sceneManager.frustum.intersectsObject(this.body)) {
 	      this.label.style.display = "none";
 	      return;
 	    }
@@ -641,28 +642,45 @@
 	
 	const unselectCurrentTarget = function () {
 	  if (targetedObject) {
-	    targetedObject.hideLabel = false;
-	    targetedObject.toggleOrbit (true);
+	    targetedObject.toggleVisibility(true);
 	    targetedObject = "";
 	    targetName = "";
 	  }
 	}
 	
+	const togglePlanets = function (selection, newVisibilityState) {
+	  for (let i = 0; i < SceneManager.planets.length; i++) {
+	    if (selection.includes(SceneManager.planets[i].name)) {
+	      SceneManager.planets[i].toggleVisibility(newVisibilityState);
+	    }
+	  }
+	}
+	
+	const clearCurrentSelection = function () {
+	  targetedObject = null;
+	  targetName = "";
+	
+	  // Reset all planets to be visible. If a planet is currently
+	  // selected, it will deactivate it's own orbit in targetPlanet
+	  for (let i = 0; i < SceneManager.planets.length; i++) {
+	    SceneManager.planets[i].toggleVisibility(true);
+	  }
+	}
+	
 	const targetArea = function (tName) {
+	  clearCurrentSelection();
+	  targetName = tName;
+	  resetControls();
+	  updateButtons(targetName);
+	
 	  switch (tName) {
-	    case "The Solar System":
 	    case "The Outer Planets":
-	      unselectCurrentTarget();
-	      targetName = tName;
-	      resetControls();
-	      updateButtons(targetName);
+	      SceneManager.camera.position.set(5799000, 4511034, -5155667);
+	      togglePlanets(["Mercury", "Venus", "Earth", "Mars"], false);
 	    break;
 	    case "The Inner Planets":
-	      unselectCurrentTarget();
-	      targetName = tName;
-	      resetControls();
 	      SceneManager.camera.position.set(150375, 434724, 241257);
-	      updateButtons(targetName);
+	      togglePlanets(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"], false);
 	    break;
 	  }
 	}
@@ -671,7 +689,7 @@
 	  if (target === targetedObject) {
 	    return;
 	  }
-	  unselectCurrentTarget();
+	  clearCurrentSelection();
 	
 	  resetControls();
 	
@@ -680,8 +698,7 @@
 	
 	  updateButtons(targetName);
 	
-	  target.hideLabel = true;
-	  target.toggleOrbit(false);
+	  target.toggleVisibility(false);
 	
 	  let newCamPos = targetedObject.obj.position.clone();
 	
@@ -735,7 +752,7 @@
 	  updateButtons();
 	  SceneManager.controls.target = SceneManager.rootObject.position;
 	  SceneManager.controls.minDistance = 50;
-	  SceneManager.controls.maxDistance = MathHelper.auToUnits(50);
+	  SceneManager.controls.maxDistance = MathHelper.auToUnits(60);
 	
 	  SceneManager.movePlanets = true;
 	
@@ -743,9 +760,6 @@
 	  SceneManager.camera.position.x = 6884494;
 	  SceneManager.camera.position.y = 2109691;
 	  SceneManager.camera.position.z = -2025282;
-	
-	
-	
 	}
 	
 	module.exports = {
