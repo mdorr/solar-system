@@ -743,6 +743,17 @@
 	  }
 	}
 	
+	const showHelp = function () {
+	  let overlay = document.getElementById('overlay');
+	  let details = document.getElementById('details');
+	
+	  if (overlay && details && targetName) {
+	    overlay.className = "overlay";
+	    details.className = "details";
+	    details.innerHTML = SoDetails.getDetails("Help");
+	  }
+	}
+	
 	const resetControls = function () {
 	  if (targetedObject) {
 	    targetedObject.hideLabel = false;
@@ -766,7 +777,8 @@
 	  receiveTargetName: receiveTargetName,
 	  resetControls: resetControls,
 	  showDetails: showDetails,
-	  hideDetails: hideDetails
+	  hideDetails: hideDetails,
+	  showHelp: showHelp,
 	}
 
 
@@ -928,6 +940,32 @@
 	
 	        <p class="wikilink"><a href="https://en.wikipedia.org/wiki/Pluto">Read more on Wikipedia</a></p>
 	      `);
+	    case "Help":
+	      return (`
+	        <span class="helpSection">
+	          <h1 class="helpTitle">Welcome to the Solar System!</h1>
+	          <p>Please take a moment to review this short tutorial. Scroll with your mousewheel. You can dismiss this help menu by clicking anywhere, or by pressing the ESC key. Have fun with the simulation!</p>
+	          <h1 class="helpTitle">
+	            Camera control
+	          </h1>
+	          <img src="images/help/camera.gif" />
+	          <p>Click and drag the mouse to rotate the camera. Use the mousewheel to zoom.</p>
+	
+	        <br />
+	          <h1 class="helpTitle">
+	            Navigation and Details
+	          </h1>
+	          <img src="images/help/nav.gif" class="helpGif" />
+	          <p class="helpText">Use Navigation in top left corner to select individual planets or areas of interest. Click Details to show additional information.</p>
+	
+	          <br />
+	          <h1 class="helpTitle">
+	            Planet Labels
+	          </h1>
+	          <img src="images/help/labels.gif" />
+	          <p>Alternatively, click one of the planet labels to zoom in.</p>
+	        </span>
+	        `);
 	    default:
 	      return (``);
 	  }

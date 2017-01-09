@@ -68,7 +68,7 @@ canvas {
   width: 80%;
   height: 80%;
 
-  background: #222;
+  background: rgba(34, 34, 34, 0.9);
   border-radius: 3px;
 
   padding: 20px;
@@ -152,6 +152,8 @@ nav {
   font-size: 16px;
   padding: 8px;
   z-index: 50;
+
+  transition: all 0.2s ease-in-out;
 }
 
 nav span {
@@ -179,6 +181,7 @@ nav li {
 
 nav li:hover {
   background-color: rgba(179, 179, 179, 0.4);
+  transition: all 0.2s ease-in-out;
 }
 
 .infobtn {
@@ -194,10 +197,44 @@ nav li:hover {
   margin: 8px;
 
   z-index: 20;
+
+  transition: all 0.2s ease-in-out;
 }
 
 .infobtn:hover {
   background-color: rgba(179, 179, 179, 0.4);
+}
+
+.helpbtn {
+  color: #ddd;
+  background-color: rgba(0, 0, 0, 0.8);
+
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 50px;
+  height: 50px;
+
+  font-size: 38px;
+
+  text-align: center;
+  line-height: 52px;
+
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  padding: 8px;
+  margin: 8px;
+
+  z-index: 20;
+
+  transition: all 0.2s ease-in-out;
+}
+
+.helpbtn:hover {
+  background-color: rgba(179, 179, 179, 0.4);
+
+  font-size: 48px;
 }
 
 .title {
@@ -217,4 +254,15 @@ nav li:hover {
   font-size: 32px;
 
   cursor: default;
+}
+
+.helpSection {
+  text-align: center;
+}
+
+.helpSection img {
+  display: block;
+  margin: 10px auto;
+  border: 1px solid #444;
+  border-radius: 6px;
 }

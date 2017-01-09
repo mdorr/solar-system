@@ -60,10 +60,11 @@
 
 		<div class="infobtn" id="info">Details</div>
 
+		<div class="helpbtn" id="help">?</div>
+
 		<div class="title" id="title"></div>
 
 		<div class="author" id="author">
-			Click and drag to rotate. Mousewheel to zoom. Click any label for details.<br /><br />
 			Created by Maurice Spiewack • <a href="https://github.com/mdorr/solar-system" target="_blank">Github</a> • <a href="http://www.spiewack.com" target="_blank">Portfolio</a> • <a href="https://www.linkedin.com/in/mspiew" target="_blank">Linkedin</a>
 		</div>
 
@@ -75,6 +76,7 @@
 		<script>
 			$(document).ready(function() {
 				window.setupScene();
+				window.inputManager.showHelp();
 
 				const $navlinks = $("li.navtarget");
 				$.each($navlinks, function (index, value) {
@@ -98,6 +100,11 @@
 				const $infoButton = $("#info");
 				$infoButton.on("click", event => {
 					window.inputManager.showDetails();
+				});
+
+				const $helpButton = $("#help");
+				$helpButton.on("click", event => {
+					window.inputManager.showHelp();
 				});
 
 				const $overlay = $("#overlay");
