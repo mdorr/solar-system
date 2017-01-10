@@ -154,6 +154,8 @@ nav {
   z-index: 50;
 
   transition: all 0.2s ease-in-out;
+
+  cursor: pointer;
 }
 
 nav span {
@@ -198,6 +200,8 @@ nav li:hover {
 
   z-index: 20;
 
+  cursor: pointer;
+
   transition: all 0.2s ease-in-out;
 }
 
@@ -208,6 +212,8 @@ nav li:hover {
 .helpbtn {
   color: #ddd;
   background-color: rgba(0, 0, 0, 0.8);
+
+  cursor: pointer;
 
   position: absolute;
   top: 10px;
